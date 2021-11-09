@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+    <meta charset="UTF-8">
+    <title>Js COS 上传测试</title>
+    <script type="text/javascript" src="../../global/settings.js"></script>
+    <script type='text/javascript' src='/Component/COS/js/md5.js'></script>
+    <script type='text/javascript' src='/Component/COS/js/b64.js'></script>
+    <script type='text/javascript' src='/Component/COS/js/hmac-sha1.js'></script>
+    <script type="text/javascript" src="./js/jquery-3.6.0.js"></script>
+</head>
+<body>
+<script type="text/javascript" src="./js/COS.js"></script>
+<br />
+<label for="access_id">目标路径</label><input type="text" id="target_path" value="/text.txt" />
+<br />
+<label for="access_id">Access ID</label><input type="text" id="access_id" />
+<br />
+<label for="access_key">Access Key</label><input type="password" id="access_key" />
+<br />
+<hr />
+<label for="upload_json_test">内容：</label><textarea id="upload_json_test"></textarea>
+<br />
+<hr />
+<a href="#" onclick="tt();return false;">提交</a>
+
+</body>
+</html>
