@@ -12,7 +12,18 @@
  *
  */
 
+const remoteStorage = new TencentCOS()
+
 class TencentCOS{
+    set_user_name(s){
+        return this.setAccessID(s)
+    }
+
+    set_password(s){
+        return this.setAccessKey(s)
+    }
+
+    //save_json
 
     /**
      * 设置 AccessID
