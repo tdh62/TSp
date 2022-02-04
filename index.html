@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+  <meta charset="UTF-8">
+  <title>主页</title>
+  <script type="application/javascript" src="global/js/vue.global.js"></script>
+  <script type="application/javascript" src="global/js/element-plus.full.js"></script>
+  <script type="application/javascript" src="js/indexmain.js"></script>
+  <link rel="stylesheet" href="global/css/element-plus.css">
+  <link rel="stylesheet" href="css/layouts.css">
+  <link rel="stylesheet" href="css/words.css">
+</head>
+<body>
+<div id="main-body">
+  <el-container>
+    <el-header height="20%">
+      <p>
+        页眉
+      </p>
+    </el-header>
+    <el-container>
+      <el-container>
+        内容框1
+      </el-container>
+      <el-container>
+        内容2
+      </el-container>
+    </el-container>
+    <el-footer class="t-footer">
+      页脚
+    </el-footer>
+  </el-container>
+</div>
+
+<script type="application/javascript">
+  vapp = mainapp.mount("#main-body")
+
+</script>
+</body>
+</html>

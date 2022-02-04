@@ -1,0 +1,15 @@
+/*
+文字
+CopyRight @tdh
+*/
+
+html{
+    /**:not([class*="icon"]) {*/
+    /* 全局字体覆盖 */
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang HK", "Helvetica Neue", "Microsoft YaHei New",
+    STHeiti Light, sans-serif; !important;
+}
+
+p{
+    font-size: 1.5em;
+}
