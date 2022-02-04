@@ -13,3 +13,9 @@ html{
 p{
     font-size: 1.5em;
 }
+
+.upload-save-tips{
+    font-size: 1em;
+    text-align: left;
+    margin-left: 2em;
+}

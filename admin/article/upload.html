@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发布新文章</title>
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../component/editor/css/editormd.css">
+    <link rel="stylesheet" href="../../component/editor/css/style.css">
+    <link rel="stylesheet" href="../../global/css/element-plus.css">
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+    <script type="application/javascript" src="/global/js/axios.js"></script>
+    <script src="../../component/storage/local.js"></script>
+    <script type="application/javascript" src="/js/articleupload.js"></script>
+    <script src="../../component/editor/patch.js"></script>
+    <link rel="stylesheet" href="../../css/words.css">
+    <link rel="stylesheet" href="../../css/layouts.css">
+</head>
+<body>
+
+<div id="uploader">
+    <el-container>
+        <el-header>
+        </el-header>
+        <el-main>
+            <h1>
+                发布新文章
+            </h1>
+            <br />
+            <el-form label-width="100px">
+                <el-form-item label="文章 ID：">
+                    <el-input v-model="aid" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="文章标题：">
+                    <el-input placeholder="输入文章标题" v-model="atitle" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="作者：">
+                    <el-input placeholder="输入作者" v-model="author" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="发布日期：">
+                    <el-date-picker placeholder="发布日期" type="date" v-model="pubtime" clearable></el-date-picker>
+                </el-form-item>
+
+                <div style="padding-left: 20px">
+                    <el-row>
+                        <el-button type="primary" @click="save_cg" plain>保存草稿</el-button>
+                        <el-button type="warning" @click="load_cg" plain>读取草稿（放弃更改）</el-button>
+                    </el-row>
+                    <div class="upload-save-tips-div">
+                        <p class="upload-save-tips" :style="{color:tipscolor}" v-html="tips"></p>
+                    </div>
+                    <div id="md-editor">
+                        <textarea id="artinfos" style="display: none;"></textarea>
+                    </div>
+                </div>
+
+
+                <el-form-item label="固定链接：">
+                        <el-input placeholder="固定链接" v-model="staticlink"></el-input>
+                </el-form-item>
+                <el-form-item label="特色图像：">
+                    <el-col :span="17">
+                    <el-input placeholder="特色图像 URL" v-model="spimg" clearable></el-input>
+                    </el-col>
+                    <el-col :span="2">本地上传：</el-col>
+                    <el-col :span="4">
+                        <el-input type="file">本地上传</el-input>
+                    </el-col>
+
+                </el-form-item>
+                <el-form-item label="SEO关键字：">
+                    <el-input placeholder="关键字，用英文逗号隔开" v-model="keyword"></el-input>
+                </el-form-item>
+                <el-form-item label="SEO描述：">
+                    <el-input placeholder="描述内容" v-model="describe"></el-input>
+                </el-form-item>
+
+            </el-form>
+        </el-main>
+        <el-footer>
+
+        </el-footer>
+    </el-container>
+</div>
+
+<script type="application/javascript">
+    v_app = upapp.mount("#uploader")
+    let MDEdit;
+    axios.get('/test/test.md').then(function (r){
+        MDEdit = editormd("md-editor", {
+            width: "100%",
+            height: 740,
+            path : '/component/editor/lib/',
+            theme : "dark",
+            previewTheme : "dark",
+            editorTheme : "pastel-on-dark",
+            markdown : r.data,
+            codeFold : true,
+            syncScrolling : true,
+            saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+            searchReplace : true,
+            //watch : false,                // 关闭实时预览
+            htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启
+            //toolbar  : false,             //关闭工具栏
+            //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
+            emoji : true,
+            taskList : true,
+            tocm            : true,         // Using [TOCM]
+            tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+            flowChart : true,             // 开启流程图支持，默认关闭
+            sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+            //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
+            //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+            //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
+            //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+            //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+            imageUpload : true,
+            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "./php/upload.php",
+            onload : function() {
+                const keyMap = {
+                    "Ctrl-S": function (cm) {
+                        v_app.save_cg()
+                        return false
+                    }
+                }
+                this.addKeyMap(keyMap)
+                if (read_from_local("article") == null){
+                    v_app.tips = "未发现已保存的草稿"
+                }else{
+                    v_app.tips = "发现保存的草稿，点击读取进行读取或者<a href='' onclick='delete_from_local(\"article\");" +
+                        "v_app.tips=\"删掉了\";return false;'>删除</a>"
+                }
+                v_app.tipscolor = "#7b7b7b"
+                setInterval(() =>{v_app.save_cg()},300000)  // 5 分钟自动保存一次
+            },
+            disabledKeyMaps : [
+                "F11", // 禁用全屏快捷键
+            ],
+
+        })
+    }).catch(function (r){
+        console.warn(r)
+    })
+</script>
+</body>
+</html>

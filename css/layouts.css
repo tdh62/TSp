@@ -12,3 +12,7 @@ html,body,#main-body,.el-container {
     height: 100%;
 }
 
+.upload-save-tips-div{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
