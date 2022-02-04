@@ -42,6 +42,9 @@
                 <el-form-item label="发布日期：">
                     <el-date-picker placeholder="发布日期" type="date" v-model="pubtime" clearable></el-date-picker>
                 </el-form-item>
+                <el-form-item label="分类：">
+                    <el-input placeholder="输入分类，用英文逗号隔开" v-model="aclass" clearable></el-input>
+                </el-form-item>
 
                 <div style="padding-left: 20px">
                     <el-row>
@@ -64,9 +67,9 @@
                     <el-col :span="17">
                     <el-input placeholder="特色图像 URL" v-model="spimg" clearable></el-input>
                     </el-col>
-                    <el-col :span="2">本地上传：</el-col>
+                    <el-col :span="2">上传：</el-col>
                     <el-col :span="4">
-                        <el-input type="file">本地上传</el-input>
+                        <el-input type="file"></el-input>
                     </el-col>
 
                 </el-form-item>

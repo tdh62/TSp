@@ -8,7 +8,7 @@ upapp = Vue.createApp({
             "atitle":"",  // 文章标题
             "author":"",  // 作者
             "pubtime":new Date(),  // 发布时间
-            "class":"",  // 文章分类
+            "aclass":"",  // 文章分类
             "tags":"",  // 标签
             "spimg":"",  // 特色图像
             "staticlink":"",  // 固定链接
