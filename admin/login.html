@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后端管理登录</title>
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../global/css/element-plus.css">
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+    <script type="application/javascript" src="/global/js/axios.js"></script>
+    <script src="../component/storage/local.js"></script>
+    <script src="../component/storage/remote.js"></script>
+    <script src="../component/storage/COS.js"></script>
+    <link rel="stylesheet" href="../css/words.css">
+    <link rel="stylesheet" href="../css/layouts.css">
+</head>
+<body>
+<div id="login-main">
+    <el-row>
+        <el-form label-width="150px">
+            <el-form-item label="用户名(Access ID)：">
+                <el-input v-model="uname"></el-input>
+            </el-form-item>
+            <el-form-item label="用户名(Access ID)：">
+                <el-input type="password" v-model="passw"></el-input>
+            </el-form-item>
+            <el-button type="primary" @click="dologin">登录</el-button>
+
+        </el-form>
+    </el-row>
+</div>
+
+<script type="application/javascript">
+    lapp = Vue.createApp({
+        data(){
+            return {"uname":"","passw":""}
+        },
+        methods:{
+            dologin(){
+                if (this.uname === "" || this.passw === ""){
+                    alert("请输入登录信息")
+                    return
+                }
+                remoteStorage.set_user_name(this.uname)
+                remoteStorage.set_password(this.passw)
+                alert("登录成功")
+            }
+        }
+    })
+    lapp.use(ElementPlus)
+    v_app = lapp.mount("#login-main")
+</script>
+</body>
+</html>

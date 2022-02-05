@@ -12,8 +12,6 @@
  *
  */
 
-const remoteStorage = new TencentCOS()
-
 class TencentCOS{
     set_user_name(s){
         return this.setAccessID(s)
@@ -23,6 +21,14 @@ class TencentCOS{
         return this.setAccessKey(s)
     }
 
+    clear_user_name(s){
+        delete_from_local("AccessID")
+    }
+
+    clear_password(s){
+        delete_from_local("AccessKey")
+    }
+
     //save_json
 
     /**
@@ -30,11 +36,11 @@ class TencentCOS{
      * @param s AccessID 字符串
      */
     setAccessID(s) {
-        save_to_session("AccessID",s)
+        save_to_local("AccessID",s)
     }
 
     setAccessKey(s) {
-        save_to_session("AccessKey",s)
+        save_to_local("AccessKey",s)
     }
 
     /**
@@ -106,7 +112,7 @@ class TencentCOS{
     cos_put_sign(fpath,hd){
         // COS PUT 签名
         let timestring = this.cos_time_string()
-        const signKey = CryptoJS.HmacSHA1(timestring, read_from_session("AccessKey")).toString();
+        const signKey = CryptoJS.HmacSHA1(timestring, read_from_local("AccessKey")).toString();
         const formatString = ["put", fpath, this.obj2str(null), this.obj2str(hd), ''].join('\n');
         const stringToSign = ['sha1', timestring, CryptoJS.SHA1(formatString).toString(), ''].join('\n');
         return [CryptoJS.HmacSHA1(stringToSign, signKey).toString(),timestring]
@@ -120,7 +126,7 @@ class TencentCOS{
      */
     cos_post_sign(timestring,Policy){
         // COS POST 签名
-        const signKey = CryptoJS.HmacSHA1(timestring, read_from_session("AccessKey")).toString();
+        const signKey = CryptoJS.HmacSHA1(timestring, read_from_local("AccessKey")).toString();
         const StringToSign = CryptoJS.SHA1(JSON.stringify(Policy)).toString()
         return CryptoJS.HmacSHA1(StringToSign, signKey).toString()
     }
@@ -142,7 +148,7 @@ class TencentCOS{
         [sign,timestring] =this.cos_put_sign(target_path,hd)
         hd['Authorization'] = [
             'q-sign-algorithm=sha1',
-            'q-ak=' + read_from_session("AccessID"),
+            'q-ak=' + read_from_local("AccessID"),
             'q-sign-time=' + timestring,
             'q-key-time=' + timestring,
             'q-header-list=' + this.getObjectKeys(hd).join(';').toLowerCase(),
@@ -165,3 +171,4 @@ class TencentCOS{
     }
 
 }
+const remoteStorage = new TencentCOS()

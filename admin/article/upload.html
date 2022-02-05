@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>发布新文章</title>
+    <script src="../../global/settings.js"></script>
+
+    <script type='text/javascript' src='/global/js/md5.js'></script>
+    <script type='text/javascript' src='/global/js/hmac-sha1.js'></script>
+    <script type='text/javascript' src='/global/js/common.js'></script>
+
     <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="../../component/editor/css/editormd.css">
     <link rel="stylesheet" href="../../component/editor/css/style.css">
     <link rel="stylesheet" href="../../global/css/element-plus.css">
-    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
-    <script type="application/javascript" src="/global/js/vue.global.js"></script>
-    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
-    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
-    <script type="application/javascript" src="/global/js/axios.js"></script>
-    <script src="../../component/storage/local.js"></script>
-    <script type="application/javascript" src="/js/articleupload.js"></script>
-    <script src="../../component/editor/patch.js"></script>
     <link rel="stylesheet" href="../../css/words.css">
     <link rel="stylesheet" href="../../css/layouts.css">
+
+    <script type="application/javascript" src="/global/js/axios.js"></script>
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+
+    <script src="../../component/storage/local.js"></script>
+    <script src="../../component/storage/COS.js"></script>
+
+    <script src="../../component/storage/remote.js"></script>
+    <script type="application/javascript" src="/js/articleupload.js"></script>
+
+    <script src="../../component/editor/patch.js"></script>
+
+
 </head>
 <body>
 
@@ -123,6 +138,7 @@
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
             imageUploadURL : "./php/upload.php",
             onload : function() {
+                // 设置快捷键
                 const keyMap = {
                     "Ctrl-S": function (cm) {
                         v_app.save_cg()
@@ -130,14 +146,12 @@
                     }
                 }
                 this.addKeyMap(keyMap)
-                if (read_from_local("article") == null){
-                    v_app.tips = "未发现已保存的草稿"
-                }else{
-                    v_app.tips = "发现保存的草稿，点击读取进行读取或者<a href='' onclick='delete_from_local(\"article\");" +
-                        "v_app.tips=\"删掉了\";return false;'>删除</a>"
-                }
-                v_app.tipscolor = "#7b7b7b"
-                setInterval(() =>{v_app.save_cg()},300000)  // 5 分钟自动保存一次
+
+                // 检查草稿
+                v_app.load_cg(init=true)
+
+                // 5 分钟自动保存一次
+                setInterval(() =>{v_app.save_cg()},300000)
             },
             disabledKeyMaps : [
                 "F11", // 禁用全屏快捷键
