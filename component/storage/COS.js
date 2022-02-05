@@ -29,7 +29,7 @@ class TencentCOS{
         delete_from_local("AccessKey")
     }
 
-    //save_json
+    //save_text_to_remote
 
     /**
      * 设置 AccessID
@@ -135,12 +135,14 @@ class TencentCOS{
      * 保存 Json 数据到腾讯云 COS
      * @param target_path 目标保存路径
      * @param json_string 需要保存的数据
+     * @param content_type 数据类型
+     * @param callback 回调
      * @return {string} 资源 URL
      */
-    save_json(target_path,json_string){
+    save_text_to_remote(target_path, json_string, content_type = "application/json",callback = null){
         const hd = {
             "Cache-Control":"no-cache",
-            "Content-Type":"application/json",
+            "Content-Type":content_type,
         }
         let rUrl = ""
         let sign,timestring
@@ -162,7 +164,8 @@ class TencentCOS{
             headers: hd,
         }
         axios.put(rUrl,json_string,config).then(function (response) {
-            console.log(response);
+            // console.log(response);
+            callback(response)
         }).catch(function (error) {
             console.log(error);
         })

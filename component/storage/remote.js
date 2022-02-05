@@ -45,9 +45,45 @@ function read_from_remote(s,callback,failureCallback){
  * 在远端存储一个值
  * @param s 名称
  * @param k 内容
+ * @param callback 成功回调
  */
-function save_to_remote(s,k){
-    remoteStorage.save_json("/settings/" + s + ".txt","{\"data\":\"" + k + "\"}")
+function save_to_remote(s,k,callback=null){
+    remoteStorage.save_text_to_remote("/settings/" + s + ".txt","{\"data\":\"" + k + "\"}","text/plain",callback)
 }
 
 
+// 常用操作
+/**
+ * 存储数据至远端
+ *
+ * @param path 数据路径
+ * @param k 数据内容
+ * @param content_type 数据类型（默认JSON）
+ * @param callback 成功回调
+ */
+function saves_remote(path,k,content_type = "application/json",callback=null){
+    console.log(typeof k)
+    if (typeof k === "object"){
+        // 转换对象到 JSON 字符串
+        k = json_to_str(k)
+    }
+    remoteStorage.save_text_to_remote(path,k,content_type,callback)
+}
+
+/**
+ * 读取远端数据
+ *
+ * @param path 数据路径
+ * @param callback 回调
+ * @param toobj 转换 JSON
+ * @param errCallback 失败回调
+ */
+function reads_remote(path,callback,toobj = false,errCallback = (r)=>{console.warn(r)}){
+    axios.get(COS_URL + path).then((r)=>{
+        if (toobj){
+            callback(str_to_json(r.data))
+        }else{
+            callback(r)
+        }
+    }).catch(errCallback)
+}

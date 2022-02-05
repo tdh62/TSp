@@ -101,7 +101,9 @@
                 <el-form-item label="SEO描述：">
                     <el-input placeholder="描述内容" v-model="describe"></el-input>
                 </el-form-item>
-
+                <el-form-item>
+                    <el-button @click="save_article">提交</el-button>
+                </el-form-item>
             </el-form>
         </el-main>
         <el-footer>
@@ -158,7 +160,7 @@
                 v_app.load_cg(init=true)
 
                 // 5 分钟自动保存一次
-                setInterval(() =>{v_app.save_cg()},300000)
+                v_app.autosave_interval = setInterval(() =>{v_app.save_cg()},300000)
             },
             disabledKeyMaps : [
                 "F11", // 禁用全屏快捷键

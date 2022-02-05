@@ -6,7 +6,7 @@ upapp = Vue.createApp({
             "aid":"",  // 文章 ID
             "atitle":"",  // 文章标题
             "author":"",  // 作者
-            "pubtime":new Date(),  // 发布时间
+            "pubtimer":new Date(),  // 发布时间
             "aclass":"",  // 文章分类
             "tags":"",  // 标签
             "spimg":"",  // 特色图像
@@ -18,6 +18,8 @@ upapp = Vue.createApp({
             "cc3":"",  // 备用字段 3
             "artinfo":"", // 文章内容
 
+            "autosave_interval":null, // 自动保存
+
             // "static_btn_type":"primary",  // 固定链接按钮类型
             // "static_setting":false,
             // "static_deleting":false,
@@ -25,13 +27,21 @@ upapp = Vue.createApp({
         }
     },
     computed:{
-
+        "pubtime":{
+            get(){
+                return new Date(this.pubtimer)
+            },
+            set(v){
+                this.pubtimer = new Date(v)
+            }
+        }
     },
     methods:{
         save_cg(){
             // 保存草稿
             this.artinfo = $("#artinfos")[0].value
             save_to_local("cg_aid",this.aid)
+            save_to_local("cg_atitle",this.atitle)
             save_to_local("cg_author",this.author)
             save_to_local("cg_pubtime",this.pubtime)
             save_to_local("cg_tags",this.tags)
@@ -66,6 +76,7 @@ upapp = Vue.createApp({
                 return
             }
             this.aid = read_from_local("cg_aid")
+            this.atitle = read_from_local("cg_atitle")
             this.author = read_from_local("cg_author")
             this.pubtime = read_from_local("cg_pubtime")
             this.tags = read_from_local("cg_tags")
@@ -87,7 +98,7 @@ upapp = Vue.createApp({
         delete_cg(){
             // 删除草稿
             delete_from_local("cg_aid")
-            delete_from_local("cg_aid")
+            delete_from_local("cg_atitle")
             delete_from_local("cg_author")
             delete_from_local("cg_pubtime")
             delete_from_local("cg_tags")
@@ -100,6 +111,36 @@ upapp = Vue.createApp({
             delete_from_local("cg_cc3")
             delete_from_local("cg_article")
         },
+        save_article(){
+            this.save_cg()
+            const tdata = {
+                "aid":this.aid,  // 文章 ID
+                "atitle":this.atitle,  // 文章标题
+                "author":this.author,  // 作者
+                "pubtime":this.pubtimer.getTime(),  // 发布时间
+                "aclass":this.aclass,  // 文章分类
+                "tags":this.tags,  // 标签
+                "spimg":this.spimg,  // 特色图像
+                // "staticlink":"",  // 固定链接
+                "keyword":this.keyword,  // SEO 关键字
+                "describe":this.describe,  // SEO 描述
+                "cc1":this.cc1,  // 备用字段 1
+                "cc2":this.cc2,  // 备用字段 2
+                "cc3":this.cc3,  // 备用字段 3
+            }
+            saves_remote("/article/" + this.aid + ".json",tdata)  // 保存元数据
+            saves_remote("/article/" + this.aid + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
+            const sdata = tdata
+            delete sdata['keyword']
+            delete sdata['describe']
+            reads_remote("/articles.json",(article_list)=>{
+                article_list[this.aid.toString()] = sdata
+                saves_remote("/articles.json",article_list)
+            },true) // 保存文章到列表
+            clearInterval(this.autosave_interval)
+            // TODO: 根据分类更细分类列表
+            alert("保存成功")
+        }
 
     },
     mounted(){

@@ -156,9 +156,10 @@ function saves(s,k,target="session",formats = "string"){
  * @param s 数据名
  * @param target 存储目标（local,cookie,session）
  * @param formats 编码格式（string,base64）
+ * @param toobj 转换 JSON
  * @return {object} 解析结果
  */
-function reads(s,target="session",formats = "string"){
+function reads(s,target="session",formats = "string",toobj = false){
     let k = ""
     if (target === "session"){
         k = read_from_session(s)
@@ -173,7 +174,7 @@ function reads(s,target="session",formats = "string"){
         // 处理 Base64 编码
         k = b64dncode(k)
     }
-    if (typeof k === "object"){
+    if (toobj){
         // 转换对象到 JSON 字符串
         k = str_to_json(k)
     }
