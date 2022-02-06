@@ -71,3 +71,21 @@ const binaryBase64 = function (str) {
     }
     return btoa(res);
 };
+
+/**
+ * 获取 GET 请求中的参数
+ * @param variable 参数名
+ * @return {string|null} 请求内容
+ */
+function getQueryVariable(variable)
+{
+    const query = window.location.search.substring(1);
+    const vars = query.split("&");
+    for (let i=0; i<vars.length; i++) {
+        const pair = vars[i].split("=");
+        if(pair[0] === variable){
+            return pair[1];
+        }
+    }
+    return null;
+}

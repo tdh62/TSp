@@ -41,7 +41,7 @@
         </el-header>
         <el-main>
             <h1>
-                发布新文章
+                {{page_title}}
             </h1>
             <br />
             <el-form label-width="100px">
@@ -75,19 +75,19 @@
                 </div>
 
 
-<!--                <el-form-item label="固定链接：">-->
-<!--                    <el-col :span="18">-->
-<!--                        <el-input placeholder="固定链接" v-model="staticlink"></el-input>-->
-<!--                    </el-col>-->
-<!--                    <el-col :span="6">-->
-<!--                        <el-button :type="static_btn_type" :loading="static_setting">设置</el-button>-->
-<!--                        <el-button :type="del_static_btn_type" :loading="static_deleting">删除</el-button>-->
-<!--                    </el-col>-->
-<!--                </el-form-item>-->
+                <!--                <el-form-item label="固定链接：">-->
+                <!--                    <el-col :span="18">-->
+                <!--                        <el-input placeholder="固定链接" v-model="staticlink"></el-input>-->
+                <!--                    </el-col>-->
+                <!--                    <el-col :span="6">-->
+                <!--                        <el-button :type="static_btn_type" :loading="static_setting">设置</el-button>-->
+                <!--                        <el-button :type="del_static_btn_type" :loading="static_deleting">删除</el-button>-->
+                <!--                    </el-col>-->
+                <!--                </el-form-item>-->
 
                 <el-form-item label="特色图像：">
                     <el-col :span="17">
-                    <el-input placeholder="特色图像 URL" v-model="spimg" clearable></el-input>
+                        <el-input placeholder="特色图像 URL" v-model="spimg" clearable></el-input>
                     </el-col>
                     <el-col :span="2">上传：</el-col>
                     <el-col :span="4">
@@ -115,60 +115,67 @@
 <script type="application/javascript">
     v_app = upapp.mount("#uploader")
     let MDEdit;
-    axios.get('/test/test.md').then(function (r){
-        MDEdit = editormd("md-editor", {
-            width: "100%",
-            height: 740,
-            path : '/component/editor/lib/',
-            theme : "dark",
-            previewTheme : "dark",
-            editorTheme : "pastel-on-dark",
-            markdown : r.data,
-            codeFold : true,
-            syncScrolling : true,
-            saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
-            searchReplace : true,
-            //watch : false,                // 关闭实时预览
-            htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启
-            //toolbar  : false,             //关闭工具栏
-            //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
-            emoji : true,
-            taskList : true,
-            tocm            : true,         // Using [TOCM]
-            tex : true,                   // 开启科学公式TeX语言支持，默认关闭
-            flowChart : true,             // 开启流程图支持，默认关闭
-            sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
-            //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
-            //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
-            //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
-            //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
-            //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
-            imageUpload : true,
-            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL : "./php/upload.php",
-            onload : function() {
-                // 设置快捷键
-                const keyMap = {
-                    "Ctrl-S": function (cm) {
-                        v_app.save_cg()
-                        return false
-                    }
+
+    MDEdit = editormd("md-editor", {
+        width: "100%",
+        height: 740,
+        path : '/component/editor/lib/',
+        theme : "dark",
+        previewTheme : "dark",
+        editorTheme : "pastel-on-dark",
+        markdown : "",
+        placeholder : "对，就是你，准备好了吗？",
+        codeFold : true,
+        syncScrolling : true,
+        saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+        searchReplace : true,
+        //watch : false,                // 关闭实时预览
+        htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启
+        //toolbar  : false,             //关闭工具栏
+        //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
+        emoji : true,
+        taskList : true,
+        tocm            : true,         // Using [TOCM]
+        tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+        flowChart : true,             // 开启流程图支持，默认关闭
+        sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+        //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
+        //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+        //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
+        //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+        //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+        imageUpload : true,
+        imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+        imageUploadURL : "./php/upload.php",
+        onload : function() {
+            // 设置快捷键
+            const keyMap = {
+                "Ctrl-S": function (cm) {
+                    v_app.save_cg()
+                    return false
                 }
-                this.addKeyMap(keyMap)
+            }
+            this.addKeyMap(keyMap)
 
+            // 判断编辑文章还是新建文章
+            const aid = getQueryVariable("aid")
+            if (aid === null){
+                // 新文章
                 // 检查草稿
+                v_app.new_article = true
                 v_app.load_cg(init=true)
+            }
+            else{
+                // 读取文章
+                v_app.load_art(aid)
+            }
 
-                // 5 分钟自动保存一次
-                v_app.autosave_interval = setInterval(() =>{v_app.save_cg()},300000)
-            },
-            disabledKeyMaps : [
-                "F11", // 禁用全屏快捷键
-            ],
-
-        })
-    }).catch(function (r){
-        console.warn(r)
+            // 设置自动保存 5 分钟自动保存一次
+            v_app.autosave_interval = setInterval(() =>{v_app.save_cg()},300000)
+        },
+        disabledKeyMaps : [
+            "F11", // 禁用全屏快捷键
+        ],
     })
 </script>
 </body>
