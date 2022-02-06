@@ -16,3 +16,12 @@ html,body,#main-body,.el-container {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+/*
+档窗口宽度小于 992 px 时隐藏左侧栏
+ */
+@media only screen and (max-width: 992px) {
+    #article_aside_outer {
+        display: none;
+    }
+}

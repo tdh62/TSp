@@ -105,3 +105,6 @@ function change_title(s){
 function change_url_without_refresh(s){
     history.pushState({}, '', s)
 }
+
+
+

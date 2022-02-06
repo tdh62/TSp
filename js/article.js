@@ -6,6 +6,8 @@ const aapp = Vue.createApp({
     data(){
         return {
             "article_id":1,
+            "scrtimer":null,
+            "scrollnum":0,
         }
     },
     computed:{
@@ -20,7 +22,8 @@ const aapp = Vue.createApp({
                         markdown: r.data,
                         // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
                         htmlDecode: "style,script,iframe",  // you can filter tags decode
-                        // toc             : false,
+                        // toc             : true,
+                        tocContainer    : "#article_aside", // 自定义 ToC 容器层
                         tocm: true,    // Using [TOCM]
                         emoji: true,
                         taskList: true,
@@ -30,7 +33,8 @@ const aapp = Vue.createApp({
                     });
                 }).catch((e)=>{alert("加载失败，请重试");console.log(e)})
             }
-        }
+        },
+        "artheight"(){return document.body.scrollHeight - 210}
 
     },
     methods:{
@@ -44,6 +48,36 @@ const aapp = Vue.createApp({
                 }
             }
             this.aid = aid
+        },
+        scroll_to_top(){
+            // 滚动到指定行数
+            this.scrollnum = document.documentElement.scrollTop
+            this._scrollToTop()
+        },
+        _scrollToTop() {
+            // 执行返回顶部
+            let _this = this
+            _this.scrtimer = requestAnimationFrame(function fn() {
+                if (_this.scrollnum > 5000) {
+                    _this.scrollnum -= 800;
+                    document.documentElement.scrollTop = _this.scrollnum;
+                    _this.scrtimer = requestAnimationFrame(fn);
+                } else if (_this.scrollnum > 1000) {
+                    _this.scrollnum -= 250;
+                    document.documentElement.scrollTop = _this.scrollnum;
+                    _this.scrtimer = requestAnimationFrame(fn);
+                } else if (_this.scrollnum > 300) {
+                    _this.scrollnum -= 75;
+                    document.documentElement.scrollTop = _this.scrollnum;
+                    _this.scrtimer = requestAnimationFrame(fn);
+                } else if (_this.scrollnum > 0) {
+                    _this.scrollnum -= 50;
+                    document.documentElement.scrollTop = _this.scrollnum;
+                    _this.scrtimer = requestAnimationFrame(fn);
+                } else {
+                    cancelAnimationFrame(_this.scrtimer);
+                }
+            });
         }
     }
 

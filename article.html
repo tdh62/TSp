@@ -39,10 +39,47 @@
 </head>
 <body>
 <div id="article_main">
-    <div id="mdview">
-        <textarea style="display: none">请稍后</textarea>
-    </div>
+    <el-container>
+        <el-header height="100px" tag="div">
+            <p>
+                页眉
+            </p>
+        </el-header>
+        <el-container>
+
+
+            <el-aside width="300px"  id="article_aside_outer">
+                <el-scrollbar ref="scrollbarRef" :height="artheight" always>
+                    <div ref="innerRef">
+                        <div id="article_aside"  class="markdown-body editormd-preview-container"> </div>
+                    </div>
+                </el-scrollbar>
+            </el-aside>
+            <el-main>
+                <el-scrollbar ref="scrollbarRef" :height="artheight" always>
+                    <div ref="innerRef">
+                        <div id="mdview">
+                            <textarea style="display: none">请稍后</textarea>
+                        </div>
+                    </div>
+                </el-scrollbar>
+            </el-main>
+
+
+        </el-container>
+        <el-footer class="t-footer" height="70px">
+            页脚
+        </el-footer>
+    </el-container>
+
+    <el-backtop :bottom="100">
+        <div style="height: 100%;width: 100%;background-color: #f2f5f6;box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+        text-align: center;color: #1989fa; font-size: .7em">
+            返回顶部
+        </div>
+    </el-backtop>
 </div>
+
 <script type="application/javascript">
     let MDView = null
     v_app = aapp.mount("#article_main")
