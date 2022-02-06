@@ -47,7 +47,7 @@ function read_from_remote(s,callback,failureCallback){
  * @param k 内容
  * @param callback 成功回调
  */
-function save_to_remote(s,k,callback=null){
+function save_to_remote(s,k,callback=function (v){}){
     remoteStorage.save_text_to_remote("/settings/" + s + ".txt","{\"data\":\"" + k + "\"}","text/plain",callback)
 }
 
@@ -61,8 +61,8 @@ function save_to_remote(s,k,callback=null){
  * @param content_type 数据类型（默认JSON）
  * @param callback 成功回调
  */
-function saves_remote(path,k,content_type = "application/json",callback=null){
-    console.log(typeof k)
+function saves_remote(path,k,content_type = "application/json",callback=function (v){}){
+    // console.log(typeof k)
     if (typeof k === "object"){
         // 转换对象到 JSON 字符串
         k = json_to_str(k)

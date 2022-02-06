@@ -21,11 +21,11 @@ class TencentCOS{
         return this.setAccessKey(s)
     }
 
-    clear_user_name(s){
+    clear_user_name(){
         delete_from_local("AccessID")
     }
 
-    clear_password(s){
+    clear_password(){
         delete_from_local("AccessKey")
     }
 
@@ -139,7 +139,7 @@ class TencentCOS{
      * @param callback 回调
      * @return {string} 资源 URL
      */
-    save_text_to_remote(target_path, json_string, content_type = "application/json",callback = null){
+    save_text_to_remote(target_path, json_string, content_type = "application/json",callback = function (r){}){
         const hd = {
             "Cache-Control":"no-cache",
             "Content-Type":content_type,
