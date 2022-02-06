@@ -89,3 +89,19 @@ function getQueryVariable(variable)
     }
     return null;
 }
+
+/**
+ * 更改页面标题
+ * @param s 标题
+ */
+function change_title(s){
+    document.title = s
+}
+
+/**
+ * 更改页面 URL 而不触发刷新
+ * @param s 新链接
+ */
+function change_url_without_refresh(s){
+    history.pushState({}, '', s)
+}

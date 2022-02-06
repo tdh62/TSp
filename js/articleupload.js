@@ -108,8 +108,13 @@ upapp = Vue.createApp({
             $("#artinfos")[0].value = this.artinfo
             MDEdit.clear()
             MDEdit.appendMarkdown(this.artinfo)
-            this.tips = "发现保存的草稿，已自动读取，点击此处 <a href='' onclick='v_app.delete_cg();MDEdit.clear();" +
-                "v_app.tips=\"删掉了\";return false;'>删除并清空</a>，请勿同时打开多个编辑窗口"
+            if (init){
+                this.tips = "发现保存的草稿，已自动读取，点击此处 <a href='' onclick='v_app.delete_cg();MDEdit.clear();" +
+                    "v_app.tips=\"删掉了\";return false;'>删除并清空</a>，请勿同时打开多个编辑窗口"
+            }
+            else{
+                this.tips = "读出来啦"
+            }
 
             v_app.tipscolor = "#7b7b7b"
             this.new_article = read_from_local("new_article")

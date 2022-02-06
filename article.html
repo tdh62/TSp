@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+    <meta charset="UTF-8">
+    <title>文章</title>
+    <script src="global/settings.js"></script>
+
+    <script type='text/javascript' src='/global/js/md5.js'></script>
+    <script type='text/javascript' src='/global/js/hmac-sha1.js'></script>
+    <script type='text/javascript' src='/js/common.js'></script>
+
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="component/editor/css/editormd.css">
+    <link rel="stylesheet" href="component/editor/css/style.css">
+    <link rel="stylesheet" href="global/css/element-plus.css">
+    <link rel="stylesheet" href="css/words.css">
+    <link rel="stylesheet" href="css/layouts.css">
+
+    <script type="application/javascript" src="global/js/axios.js"></script>
+
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script src="/component/editor/lib/marked.min.js"></script>
+    <script src="/component/editor/lib/prettify.min.js"></script>
+    <script src="/component/editor/lib/raphael.min.js"></script>
+    <script src="/component/editor/lib/underscore.min.js"></script>
+    <script src="/component/editor/lib/sequence-diagram.min.js"></script>
+    <script src="/component/editor/lib/flowchart.min.js"></script>
+    <script src="/component/editor/lib/jquery.flowchart.min.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+
+    <script src="component/storage/local.js"></script>
+    <script src="component/storage/COS.js"></script>
+    <script src="component/storage/remote.js"></script>
+    <script src="js/article.js"></script>
+
+</head>
+<body>
+<div id="article_main">
+    <div id="mdview">
+        <textarea style="display: none">请稍后</textarea>
+    </div>
+</div>
+<script type="application/javascript">
+    let MDView = null
+    v_app = aapp.mount("#article_main")
+    v_app.load_aid()
+
+
+
+
+</script>
+</body>
+</html>
