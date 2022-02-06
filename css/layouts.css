@@ -25,3 +25,10 @@ html,body,#main-body,.el-container {
         display: none;
     }
 }
+
+@media only screen and (min-width: 1102px) {
+    #article_center {
+        max-width: 90%;
+    }
+}
+
