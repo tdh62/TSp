@@ -131,7 +131,7 @@ upapp = Vue.createApp({
             delete_from_local("new_article_cg")
         },
         save_article(){
-            this.newarticle.save_cg()
+            this.save_cg()
             if (this.staticfile){
                 // 固定链接文章
 
@@ -159,10 +159,11 @@ upapp = Vue.createApp({
                 // 更新元数据
                 sdata = this.set_static_link(null,true)
 
+                let _this = this
                 // 添加到列表
                 reads_remote("/static-link.json",(r)=>{
-                        let slist = r.data
-                        slist[this.newarticle.staticlink] = sdata
+                        let slist = r
+                        slist[_this.newarticle.staticlink.toString()] = sdata
                         saves_remote("/static-link.json",slist,"application/json",(r)=>{
                             console.log(r)
                             alert("保存成功")
@@ -273,7 +274,7 @@ upapp = Vue.createApp({
             reads_remote(lnk + ".json",(tdata)=>{
                 this.newarticle.atitle = tdata.atitle
                 this.newarticle.author = tdata.author
-                this.newarticle.pubtimer = tdata.pubtimer
+                this.newarticle.pubtime = tdata.pubtimer
                 this.newarticle.aclass = tdata.aclass
                 this.newarticle.tags = tdata.tags
                 this.newarticle.spimg = tdata.spimg
