@@ -1,4 +1,4 @@
-/*! Element Plus v1.3.0-beta.10 */
+/*! Element Plus v2.0.0 */
 
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
@@ -3019,6 +3019,73 @@
 	  return vue.computed(() => disabled.value || vue.unref(fallback) || (form == null ? void 0 : form.disabled) || false);
 	};
 
+	const useDeprecated = ({ from, replacement, scope, version, ref }, condition) => {
+	  vue.watch(() => vue.unref(condition), (val) => {
+	  }, {
+	    immediate: true
+	  });
+	};
+
+	const useDraggable = (targetRef, dragRef, draggable) => {
+	  let transform = {
+	    offsetX: 0,
+	    offsetY: 0
+	  };
+	  const onMousedown = (e) => {
+	    const downX = e.clientX;
+	    const downY = e.clientY;
+	    const { offsetX, offsetY } = transform;
+	    const targetRect = targetRef.value.getBoundingClientRect();
+	    const targetLeft = targetRect.left;
+	    const targetTop = targetRect.top;
+	    const targetWidth = targetRect.width;
+	    const targetHeight = targetRect.height;
+	    const clientWidth = document.documentElement.clientWidth;
+	    const clientHeight = document.documentElement.clientHeight;
+	    const minLeft = -targetLeft + offsetX;
+	    const minTop = -targetTop + offsetY;
+	    const maxLeft = clientWidth - targetLeft - targetWidth + offsetX;
+	    const maxTop = clientHeight - targetTop - targetHeight + offsetY;
+	    const onMousemove = (e2) => {
+	      const moveX = Math.min(Math.max(offsetX + e2.clientX - downX, minLeft), maxLeft);
+	      const moveY = Math.min(Math.max(offsetY + e2.clientY - downY, minTop), maxTop);
+	      transform = {
+	        offsetX: moveX,
+	        offsetY: moveY
+	      };
+	      targetRef.value.style.transform = `translate(${addUnit(moveX)}, ${addUnit(moveY)})`;
+	    };
+	    const onMouseup = () => {
+	      document.removeEventListener("mousemove", onMousemove);
+	      document.removeEventListener("mouseup", onMouseup);
+	    };
+	    document.addEventListener("mousemove", onMousemove);
+	    document.addEventListener("mouseup", onMouseup);
+	  };
+	  const onDraggable = () => {
+	    if (dragRef.value && targetRef.value) {
+	      dragRef.value.addEventListener("mousedown", onMousedown);
+	    }
+	  };
+	  const offDraggable = () => {
+	    if (dragRef.value && targetRef.value) {
+	      dragRef.value.removeEventListener("mousedown", onMousedown);
+	    }
+	  };
+	  vue.onMounted(() => {
+	    vue.watchEffect(() => {
+	      if (draggable.value) {
+	        onDraggable();
+	      } else {
+	        offDraggable();
+	      }
+	    });
+	  });
+	  vue.onBeforeUnmount(() => {
+	    offDraggable();
+	  });
+	};
+
 	const useFocus = (el) => {
 	  return {
 	    focus: () => {
@@ -4544,7 +4611,7 @@
 	  });
 	}
 
-	const version$1 = "1.3.0-beta.10";
+	const version$1 = "2.0.0";
 
 	const INSTALLED_KEY = Symbol("INSTALLED_KEY");
 	const makeInstaller = (components = []) => {
@@ -6947,15 +7014,15 @@
 	  always: Boolean
 	});
 
-	const COMPONENT_NAME$9 = "Thumb";
+	const COMPONENT_NAME$f = "Thumb";
 	const _sfc_main$26 = vue.defineComponent({
-	  name: COMPONENT_NAME$9,
+	  name: COMPONENT_NAME$f,
 	  props: thumbProps,
 	  setup(props) {
 	    const scrollbar = vue.inject(scrollbarContextKey);
 	    const ns = useNamespace("scrollbar");
 	    if (!scrollbar)
-	      throwError(COMPONENT_NAME$9, "can not inject scrollbar context");
+	      throwError(COMPONENT_NAME$f, "can not inject scrollbar context");
 	    const instance = vue.ref();
 	    const thumb = vue.ref();
 	    const thumbState = vue.ref({});
@@ -9262,9 +9329,9 @@
 	}
 	var ElPopperArrow = /* @__PURE__ */ _export_sfc$1(_sfc_main$22, [["render", _sfc_render$1Z]]);
 
-	const NAME$1 = "ElOnlyChild";
+	const NAME = "ElOnlyChild";
 	const OnlyChild = vue.defineComponent({
-	  name: NAME$1,
+	  name: NAME,
 	  setup(_, { slots, attrs }) {
 	    var _a;
 	    const forwardRefInjection = vue.inject(FORWARD_REF_INJECTION_KEY, void 0);
@@ -9542,6 +9609,23 @@
 	  ], 38);
 	}
 	var ElPopperContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$20, [["render", _sfc_render$1X]]);
+
+	function useDeprecateAppendToBody(scope, from) {
+	  const vm = vue.getCurrentInstance();
+	  const compatTeleported = vue.computed(() => {
+	    return isBool(vm.props[from]) ? vm.props[from] : vm.props.teleported;
+	  });
+	  useDeprecated({
+	    scope,
+	    from,
+	    replacement: "teleported",
+	    version: "2.1.0",
+	    ref: "https://element-plus.org/en-US/component/tooltip.html#attributes"
+	  }, vue.computed(() => isBool(vm.props[from])));
+	  return {
+	    compatTeleported
+	  };
+	}
 
 	const ElPopper = withInstall(Popper);
 
@@ -10025,8 +10109,9 @@
 
 	const ElTooltip = withInstall(Tooltip);
 
+	const COMPONENT_NAME$e = "ElAutocomplete";
 	const _sfc_main$1X = vue.defineComponent({
-	  name: "ElAutocomplete",
+	  name: COMPONENT_NAME$e,
 	  components: {
 	    ElTooltip,
 	    ElInput,
@@ -10087,8 +10172,9 @@
 	    },
 	    popperAppendToBody: {
 	      type: Boolean,
-	      default: true
+	      default: void 0
 	    },
+	    teleported: useTooltipContentProps.teleported,
 	    highlightFirstItem: {
 	      type: Boolean,
 	      default: false
@@ -10105,6 +10191,7 @@
 	  ],
 	  setup(props, ctx) {
 	    const ns = useNamespace("autocomplete");
+	    const { compatTeleported } = useDeprecateAppendToBody(COMPONENT_NAME$e, "popperAppendToBody");
 	    const attrs = useAttrs();
 	    const suggestions = vue.ref([]);
 	    const highlightedIndex = vue.ref(-1);
@@ -10252,6 +10339,7 @@
 	      id,
 	      suggestionVisible,
 	      suggestionLoading,
+	      compatTeleported,
 	      getData,
 	      handleInput,
 	      handleChange,
@@ -10285,7 +10373,7 @@
 	    placement: _ctx.placement,
 	    "fallback-placements": ["bottom-start", "top-start"],
 	    "popper-class": `${_ctx.ns.e("popper")} ${_ctx.popperClass}`,
-	    "append-to-body": _ctx.popperAppendToBody,
+	    teleported: _ctx.compatTeleported,
 	    "gpu-acceleration": false,
 	    pure: "",
 	    "manual-mode": "",
@@ -10389,7 +10477,7 @@
 	      ])
 	    ]),
 	    _: 3
-	  }, 8, ["visible", "placement", "popper-class", "append-to-body", "transition", "onShow"]);
+	  }, 8, ["visible", "placement", "popper-class", "teleported", "transition", "onShow"]);
 	}
 	var Autocomplete = /* @__PURE__ */ _export_sfc$1(_sfc_main$1X, [["render", _sfc_render$1S]]);
 
@@ -10524,9 +10612,9 @@
 	  click: (evt) => evt instanceof MouseEvent
 	};
 
-	const COMPONENT_NAME$8 = "ElBacktop";
+	const COMPONENT_NAME$d = "ElBacktop";
 	const _sfc_main$1V = vue.defineComponent({
-	  name: COMPONENT_NAME$8,
+	  name: COMPONENT_NAME$d,
 	  components: {
 	    ElIcon,
 	    CaretTop: caretTop
@@ -10572,7 +10660,7 @@
 	      if (props.target) {
 	        el.value = (_a = document.querySelector(props.target)) != null ? _a : void 0;
 	        if (!el.value) {
-	          throwError(COMPONENT_NAME$8, `target is not existed: ${props.target}`);
+	          throwError(COMPONENT_NAME$d, `target is not existed: ${props.target}`);
 	        }
 	        container.value = el.value;
 	      }
@@ -10740,9 +10828,9 @@
 	  }
 	});
 
-	const COMPONENT_NAME$7 = "ElBreadcrumbItem";
+	const COMPONENT_NAME$c = "ElBreadcrumbItem";
 	const _sfc_main$1S = vue.defineComponent({
-	  name: COMPONENT_NAME$7,
+	  name: COMPONENT_NAME$c,
 	  components: {
 	    ElIcon
 	  },
@@ -17320,8 +17408,9 @@
 	    }
 	  ]
 	};
+	const COMPONENT_NAME$b = "ElCascader";
 	const _sfc_main$1w = vue.defineComponent({
-	  name: "ElCascader",
+	  name: COMPONENT_NAME$b,
 	  components: {
 	    ElCascaderPanel: _CascaderPanel,
 	    ElInput,
@@ -17375,8 +17464,9 @@
 	    },
 	    popperAppendToBody: {
 	      type: Boolean,
-	      default: true
-	    }
+	      default: void 0
+	    },
+	    teleported: useTooltipContentProps.teleported
 	  },
 	  emits: [
 	    UPDATE_MODEL_EVENT,
@@ -17390,6 +17480,7 @@
 	  setup(props, { emit }) {
 	    let inputInitialHeight = 0;
 	    let pressDeleteCount = 0;
+	    const { compatTeleported } = useDeprecateAppendToBody(COMPONENT_NAME$b, "popperAppendToBody");
 	    const { t } = useLocale();
 	    const elForm = vue.inject(elFormKey, {});
 	    const elFormItem = vue.inject(elFormItemKey, {});
@@ -17703,6 +17794,7 @@
 	      multiple,
 	      readonly,
 	      clearBtnVisible,
+	      compatTeleported,
 	      t,
 	      togglePopperVisible,
 	      hideSuggestionPanel,
@@ -17743,7 +17835,7 @@
 	    ref: "tooltipRef",
 	    visible: _ctx.popperVisible,
 	    "onUpdate:visible": _cache[17] || (_cache[17] = ($event) => _ctx.popperVisible = $event),
-	    "append-to-body": _ctx.popperAppendToBody,
+	    teleported: _ctx.compatTeleported,
 	    "popper-class": `el-cascader__dropdown ${_ctx.popperClass}`,
 	    "popper-options": _ctx.popperOptions,
 	    "fallback-placements": [
@@ -17909,7 +18001,7 @@
 	      ]) : vue.createCommentVNode("v-if", true)
 	    ]),
 	    _: 3
-	  }, 8, ["visible", "append-to-body", "popper-class", "popper-options", "onHide"]);
+	  }, 8, ["visible", "teleported", "popper-class", "popper-options", "onHide"]);
 	}
 	var Cascader = /* @__PURE__ */ _export_sfc$1(_sfc_main$1w, [["render", _sfc_render$1s]]);
 
@@ -22480,6 +22572,10 @@
 	    type: Boolean,
 	    default: false
 	  },
+	  draggable: {
+	    type: Boolean,
+	    default: false
+	  },
 	  lockScroll: {
 	    type: Boolean,
 	    default: true
@@ -22670,17 +22766,24 @@
 	  emits: dialogEmits,
 	  setup(props, ctx) {
 	    const dialogRef = vue.ref();
+	    const headerRef = vue.ref();
 	    const dialog = useDialog(props, ctx, dialogRef);
 	    const overlayEvent = useSameTarget(dialog.onModalClick);
+	    const draggable = vue.computed(() => props.draggable && !props.fullscreen);
+	    useDraggable(dialogRef, headerRef, draggable);
 	    return {
 	      dialogRef,
+	      headerRef,
 	      overlayEvent,
 	      ...dialog
 	    };
 	  }
 	});
 	const _hoisted_1$I = ["aria-label"];
-	const _hoisted_2$u = { class: "el-dialog__header" };
+	const _hoisted_2$u = {
+	  ref: "headerRef",
+	  class: "el-dialog__header"
+	};
 	const _hoisted_3$l = { class: "el-dialog__title" };
 	const _hoisted_4$c = {
 	  key: 0,
@@ -22724,6 +22827,7 @@
 	                  "el-dialog",
 	                  {
 	                    "is-fullscreen": _ctx.fullscreen,
+	                    "is-draggable": _ctx.draggable,
 	                    "el-dialog--center": _ctx.center
 	                  },
 	                  _ctx.customClass
@@ -22753,7 +22857,7 @@
 	                      _: 1
 	                    })
 	                  ])) : vue.createCommentVNode("v-if", true)
-	                ]),
+	                ], 512),
 	                _ctx.rendered ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_4$c, [
 	                  vue.renderSlot(_ctx.$slots, "default")
 	                ])) : vue.createCommentVNode("v-if", true),
@@ -27621,19 +27725,19 @@
 	    default: void 0
 	  }
 	});
-	const COMPONENT_NAME$6 = "ElSubMenu";
+	const COMPONENT_NAME$a = "ElSubMenu";
 	var SubMenu = vue.defineComponent({
-	  name: COMPONENT_NAME$6,
+	  name: COMPONENT_NAME$a,
 	  props: subMenuProps,
 	  setup(props, { slots, expose }) {
 	    const instance = vue.getCurrentInstance();
 	    const { paddingStyle, indexPath, parentMenu } = useMenu(instance, vue.computed(() => props.index));
 	    const rootMenu = vue.inject("rootMenu");
 	    if (!rootMenu)
-	      throwError(COMPONENT_NAME$6, "can not inject root menu");
+	      throwError(COMPONENT_NAME$a, "can not inject root menu");
 	    const subMenu = vue.inject(`subMenu:${parentMenu.value.uid}`);
 	    if (!subMenu)
-	      throwError(COMPONENT_NAME$6, "can not inject sub menu");
+	      throwError(COMPONENT_NAME$a, "can not inject sub menu");
 	    const items = vue.ref({});
 	    const subMenus = vue.ref({});
 	    let timeout;
@@ -28156,9 +28260,9 @@
 	  click: (item) => isString$1(item.index) && Array.isArray(item.indexPath)
 	};
 
-	const COMPONENT_NAME$5 = "ElMenuItem";
+	const COMPONENT_NAME$9 = "ElMenuItem";
 	const _sfc_main$P = vue.defineComponent({
-	  name: COMPONENT_NAME$5,
+	  name: COMPONENT_NAME$9,
 	  components: {
 	    ElTooltip
 	  },
@@ -28168,11 +28272,11 @@
 	    const instance = vue.getCurrentInstance();
 	    const rootMenu = vue.inject("rootMenu");
 	    if (!rootMenu)
-	      throwError(COMPONENT_NAME$5, "can not inject root menu");
+	      throwError(COMPONENT_NAME$9, "can not inject root menu");
 	    const { parentMenu, paddingStyle, indexPath } = useMenu(instance, vue.toRef(props, "index"));
 	    const subMenu = vue.inject(`subMenu:${parentMenu.value.uid}`);
 	    if (!subMenu)
-	      throwError(COMPONENT_NAME$5, "can not inject sub menu");
+	      throwError(COMPONENT_NAME$9, "can not inject sub menu");
 	    const active = vue.computed(() => props.index === rootMenu.activeIndex);
 	    const item = vue.reactive({
 	      index: props.index,
@@ -28256,15 +28360,15 @@
 	  title: String
 	};
 
-	const COMPONENT_NAME$4 = "ElMenuItemGroup";
+	const COMPONENT_NAME$8 = "ElMenuItemGroup";
 	const _sfc_main$O = vue.defineComponent({
-	  name: COMPONENT_NAME$4,
+	  name: COMPONENT_NAME$8,
 	  props: menuItemGroupProps,
 	  setup() {
 	    const instance = vue.getCurrentInstance();
 	    const menu = vue.inject("rootMenu");
 	    if (!menu)
-	      throwError(COMPONENT_NAME$4, "can not inject root menu");
+	      throwError(COMPONENT_NAME$8, "can not inject root menu");
 	    const levelPadding = vue.computed(() => {
 	      if (menu.props.collapse)
 	        return 20;
@@ -29349,9 +29453,10 @@
 	  };
 	};
 
+	const COMPONENT_NAME$7 = "ElSelect";
 	const _sfc_main$I = vue.defineComponent({
-	  name: "ElSelect",
-	  componentName: "ElSelect",
+	  name: COMPONENT_NAME$7,
+	  componentName: COMPONENT_NAME$7,
 	  components: {
 	    ElInput,
 	    ElSelectMenu: ElSelectMenu$1,
@@ -29413,8 +29518,9 @@
 	    collapseTags: Boolean,
 	    popperAppendToBody: {
 	      type: Boolean,
-	      default: true
+	      default: void 0
 	    },
+	    teleported: useTooltipContentProps.teleported,
 	    clearIcon: {
 	      type: [String, Object],
 	      default: circleClose
@@ -29594,6 +29700,7 @@
 	      var _a, _b;
 	      return (_b = (_a = tooltipRef.value) == null ? void 0 : _a.popperRef) == null ? void 0 : _b.contentRef;
 	    });
+	    const { compatTeleported } = useDeprecateAppendToBody(COMPONENT_NAME$7, "popperAppendToBody");
 	    return {
 	      tagInMultiLine,
 	      prefixWidth,
@@ -29654,7 +29761,8 @@
 	      selectWrapper,
 	      scrollbar,
 	      wrapperKls,
-	      selectTagsStyle
+	      selectTagsStyle,
+	      compatTeleported
 	    };
 	  }
 	});
@@ -29686,7 +29794,7 @@
 	      visible: _ctx.dropMenuVisible,
 	      "onUpdate:visible": _cache[23] || (_cache[23] = ($event) => _ctx.dropMenuVisible = $event),
 	      placement: "bottom-start",
-	      "append-to-body": _ctx.popperAppendToBody,
+	      teleported: _ctx.compatTeleported,
 	      "popper-class": `el-select__popper ${_ctx.popperClass}`,
 	      "fallback-placements": ["bottom-start", "top-start", "right", "left"],
 	      effect: "light",
@@ -29905,7 +30013,7 @@
 	        })
 	      ]),
 	      _: 3
-	    }, 8, ["visible", "append-to-body", "popper-class", "onShow"])
+	    }, 8, ["visible", "teleported", "popper-class", "onShow"])
 	  ], 2)), [
 	    [_directive_click_outside, _ctx.handleClose, _ctx.popperPaneRef]
 	  ]);
@@ -30583,52 +30691,56 @@
 
 	const ElPagination = withInstall(Pagination);
 
-	const popconfirmProps = buildProps({
-	  title: {
-	    type: String
-	  },
-	  confirmButtonText: {
-	    type: String
-	  },
-	  cancelButtonText: {
-	    type: String
-	  },
-	  confirmButtonType: {
-	    type: String,
-	    values: buttonType,
-	    default: "primary"
-	  },
-	  cancelButtonType: {
-	    type: String,
-	    values: buttonType,
-	    default: "text"
-	  },
-	  icon: {
-	    type: definePropType([String, Object]),
-	    default: questionFilled
-	  },
-	  iconColor: {
-	    type: String,
-	    default: "#f90"
-	  },
-	  hideIcon: {
-	    type: Boolean,
-	    default: false
-	  },
-	  hideAfter: {
-	    type: Number,
-	    default: 200
-	  },
-	  onConfirm: {
-	    type: definePropType(Function)
-	  },
-	  onCancel: {
-	    type: definePropType(Function)
-	  }
-	});
+	const popconfirmProps = {
+	  ...buildProps({
+	    title: {
+	      type: String
+	    },
+	    confirmButtonText: {
+	      type: String
+	    },
+	    cancelButtonText: {
+	      type: String
+	    },
+	    confirmButtonType: {
+	      type: String,
+	      values: buttonType,
+	      default: "primary"
+	    },
+	    cancelButtonType: {
+	      type: String,
+	      values: buttonType,
+	      default: "text"
+	    },
+	    icon: {
+	      type: definePropType([String, Object]),
+	      default: questionFilled
+	    },
+	    iconColor: {
+	      type: String,
+	      default: "#f90"
+	    },
+	    hideIcon: {
+	      type: Boolean,
+	      default: false
+	    },
+	    hideAfter: {
+	      type: Number,
+	      default: 200
+	    },
+	    onConfirm: {
+	      type: definePropType(Function)
+	    },
+	    onCancel: {
+	      type: definePropType(Function)
+	    }
+	  }),
+	  teleported: useTooltipContentProps.teleported
+	};
 
+	const COMPONENT_NAME$6 = "Elpopperconfirm";
 	const _sfc_main$C = vue.defineComponent({
-	  name: "ElPopconfirm",
+	  name: COMPONENT_NAME$6,
 	  components: {
 	    ElButton,
 	    ElTooltip,
@@ -30636,6 +30748,7 @@
 	  },
 	  props: popconfirmProps,
 	  setup(props) {
+	    const { compatTeleported } = useDeprecateAppendToBody(COMPONENT_NAME$6, "appendToBody");
 	    const { t } = useLocale();
 	    const tooltipRef = vue.ref();
 	    const hidePopper = () => {
@@ -30661,6 +30774,7 @@
 	      finalConfirmButtonText,
 	      finalCancelButtonText,
 	      tooltipRef,
+	      compatTeleported,
 	      confirm,
 	      cancel
 	    };
@@ -30677,7 +30791,7 @@
 	    trigger: "click",
 	    effect: "light",
 	    "popper-class": "el-popover",
-	    "append-to-body": "",
+	    teleported: _ctx.compatTeleported,
 	    "fallback-placements": ["bottom", "top", "right", "left"],
 	    "hide-after": _ctx.hideAfter,
 	    persistent: ""
@@ -30725,13 +30839,14 @@
 	      _ctx.$slots.reference ? vue.renderSlot(_ctx.$slots, "reference", { key: 0 }) : vue.createCommentVNode("v-if", true)
 	    ]),
 	    _: 3
-	  }, 16, ["hide-after"]);
+	  }, 16, ["teleported", "hide-after"]);
 	}
 	var Popconfirm = /* @__PURE__ */ _export_sfc$1(_sfc_main$C, [["render", _sfc_render$y]]);
 
 	const ElPopconfirm = withInstall(Popconfirm);
 
 	const usePopoverProps = {
+	  appendToBody: { type: Boolean, default: void 0 },
 	  content: useTooltipContentProps.content,
 	  popperStyle: useTooltipContentProps.popperStyle,
 	  popperClass: useTooltipContentProps.popperClass,
@@ -30743,6 +30858,7 @@
 	    ...useTooltipContentProps.effect,
 	    default: "light"
 	  },
+	  teleported: useTooltipContentProps.teleported,
 	  ...buildProps({
 	    title: String,
 	    width: {
@@ -30753,9 +30869,9 @@
 	};
 
 	const emits = ["update:visible", "after-enter", "after-leave"];
-	const NAME = "ElPopover";
+	const COMPONENT_NAME$5 = "ElPopover";
 	const _sfc_main$B = vue.defineComponent({
-	  name: NAME,
+	  name: COMPONENT_NAME$5,
 	  components: {
 	    ElTooltip
 	  },
@@ -30788,6 +30904,7 @@
 	        props.popperClass
 	      ];
 	    });
+	    const { compatTeleported } = useDeprecateAppendToBody(COMPONENT_NAME$5, "appendToBody");
 	    const hide = () => {
 	      var _a;
 	      (_a = tooltipRef.value) == null ? void 0 : _a.hide();
@@ -30799,6 +30916,7 @@
 	      emit("after-leave");
 	    };
 	    return {
+	      compatTeleported,
 	      kls,
 	      style,
 	      tooltipRef,
@@ -30822,6 +30940,7 @@
 	    enterable: _ctx.enterable,
 	    "popper-class": _ctx.kls,
 	    "popper-style": _ctx.style,
+	    teleported: _ctx.compatTeleported,
 	    persistent: "",
 	    onShow: _ctx.afterEnter,
 	    onHide: _ctx.afterLeave
@@ -30836,7 +30955,7 @@
 	      _ctx.$slots.reference ? vue.renderSlot(_ctx.$slots, "reference", { key: 0 }) : vue.createCommentVNode("v-if", true)
 	    ]),
 	    _: 3
-	  }, 16, ["aria-label", "effect", "enterable", "popper-class", "popper-style", "onShow", "onHide"]);
+	  }, 16, ["aria-label", "effect", "enterable", "popper-class", "popper-style", "teleported", "onShow", "onHide"]);
 	}
 	var Popover = /* @__PURE__ */ _export_sfc$1(_sfc_main$B, [["render", _sfc_render$x]]);
 
@@ -33437,8 +33556,9 @@
 	  },
 	  popperAppendToBody: {
 	    type: Boolean,
-	    default: true
+	    default: void 0
 	  },
+	  teleported: useTooltipContentProps.teleported,
 	  popperClass: {
 	    type: String,
 	    default: ""
@@ -33801,9 +33921,11 @@
 	  default: 42,
 	  small: 33
 	};
+	const COMPONENT_NAME$4 = "ElSelectV2";
 	const useSelect = (props, emit) => {
 	  const { t } = useLocale();
 	  const { form: elForm, formItem: elFormItem } = useFormItem();
+	  const { compatTeleported } = useDeprecateAppendToBody(COMPONENT_NAME$4, "popperAppendToBody");
 	  const states = vue.reactive({
 	    inputValue: DEFAULT_INPUT_PLACEHOLDER,
 	    displayInputValue: DEFAULT_INPUT_PLACEHOLDER,
@@ -34380,7 +34502,7 @@
 	    popperRef,
 	    validateState,
 	    validateIcon,
-	    Effect,
+	    compatTeleported,
 	    debouncedOnInputChange,
 	    deleteTag,
 	    getLabel,
@@ -34476,7 +34598,7 @@
 	      ref: "popper",
 	      visible: _ctx.dropdownMenuVisible,
 	      "onUpdate:visible": _cache[22] || (_cache[22] = ($event) => _ctx.dropdownMenuVisible = $event),
-	      "append-to-body": _ctx.popperAppendToBody,
+	      teleported: _ctx.compatTeleported,
 	      "popper-class": `el-select-v2__popper ${_ctx.popperClass}`,
 	      "gpu-acceleration": false,
 	      "stop-popper-mouse-event": false,
@@ -34720,7 +34842,7 @@
 	        }, 8, ["data", "width", "hovering-index", "scrollbar-always-on"])
 	      ]),
 	      _: 3
-	    }, 8, ["visible", "append-to-body", "popper-class", "popper-options", "onShow"])
+	    }, 8, ["visible", "teleported", "popper-class", "popper-options", "onShow"])
 	  ], 34)), [
 	    [_directive_click_outside, _ctx.handleClickOutside, _ctx.popperRef]
 	  ]);
@@ -39679,6 +39801,8 @@
 	  };
 	  const bindEvents = () => {
 	    var _a;
+	    if (!table.refs.scrollWrapper)
+	      return;
 	    (_a = table.refs.scrollWrapper.wrap$) == null ? void 0 : _a.addEventListener("scroll", syncPostion, {
 	      passive: true
 	    });
@@ -43637,7 +43761,6 @@
 	      store.value.setDefaultCheckedKey(newVal);
 	    });
 	    vue.watch(() => props.defaultExpandedKeys, (newVal) => {
-	      store.value.defaultExpandedKeys = newVal;
 	      store.value.setDefaultExpandedKeys(newVal);
 	    });
 	    vue.watch(() => props.data, (newVal) => {
@@ -47428,6 +47551,7 @@
 	      default: true
 	    },
 	    center: Boolean,
+	    draggable: Boolean,
 	    roundButton: {
 	      default: false,
 	      type: Boolean
@@ -47486,8 +47610,10 @@
 	    const btnSize = useSize(vue.computed(() => props.buttonSize), { prop: true, form: true, formItem: true });
 	    const iconComponent = vue.computed(() => state.icon || TypeComponentsMap[state.type] || "");
 	    const hasMessage = vue.computed(() => !!state.message);
-	    const inputRef = vue.ref(null);
-	    const confirmRef = vue.ref(null);
+	    const rootRef = vue.ref();
+	    const headerRef = vue.ref();
+	    const inputRef = vue.ref();
+	    const confirmRef = vue.ref();
 	    const confirmButtonClasses = vue.computed(() => state.confirmButtonClass);
 	    vue.watch(() => state.inputValue, async (val) => {
 	      await vue.nextTick();
@@ -47518,6 +47644,8 @@
 	        state.validateError = false;
 	      }
 	    });
+	    const draggable = vue.computed(() => props.draggable);
+	    useDraggable(rootRef, headerRef, draggable);
 	    vue.onMounted(async () => {
 	      await vue.nextTick();
 	      if (props.closeOnHashChange) {
@@ -47543,6 +47671,7 @@
 	        handleAction(state.distinguishCancelAndClose ? "close" : "cancel");
 	      }
 	    };
+	    const overlayEvent = useSameTarget(handleWrapperClick);
 	    const handleInputEnter = () => {
 	      if (state.inputType !== "textarea") {
 	        return handleAction("confirm");
@@ -47607,12 +47736,15 @@
 	    useRestoreActive(visible);
 	    return {
 	      ...vue.toRefs(state),
+	      overlayEvent,
 	      visible,
 	      hasMessage,
 	      typeClass,
 	      btnSize,
 	      iconComponent,
 	      confirmButtonClasses,
+	      rootRef,
+	      headerRef,
 	      inputRef,
 	      confirmRef,
 	      doClose,
@@ -47627,6 +47759,7 @@
 	const _hoisted_1$1 = ["aria-label"];
 	const _hoisted_2$1 = {
 	  key: 0,
+	  ref: "headerRef",
 	  class: "el-message-box__header"
 	};
 	const _hoisted_3$1 = { class: "el-message-box__title" };
@@ -47649,137 +47782,145 @@
 	  const _directive_trap_focus = vue.resolveDirective("trap-focus");
 	  return vue.openBlock(), vue.createBlock(vue.Transition, {
 	    name: "fade-in-linear",
-	    onAfterLeave: _cache[7] || (_cache[7] = ($event) => _ctx.$emit("vanish"))
+	    onAfterLeave: _cache[11] || (_cache[11] = ($event) => _ctx.$emit("vanish"))
 	  }, {
 	    default: vue.withCtx(() => [
 	      vue.withDirectives(vue.createVNode(_component_el_overlay, {
 	        "z-index": _ctx.zIndex,
 	        "overlay-class": ["is-message-box", _ctx.modalClass],
-	        mask: _ctx.modal,
-	        onClick: vue.withModifiers(_ctx.handleWrapperClick, ["self"])
+	        mask: _ctx.modal
 	      }, {
 	        default: vue.withCtx(() => [
-	          vue.withDirectives((vue.openBlock(), vue.createElementBlock("div", {
-	            ref: "root",
-	            role: "dialog",
-	            "aria-label": _ctx.title || "dialog",
-	            "aria-modal": "true",
-	            class: vue.normalizeClass([
-	              "el-message-box",
-	              _ctx.customClass,
-	              { "el-message-box--center": _ctx.center }
-	            ]),
-	            style: vue.normalizeStyle(_ctx.customStyle)
+	          vue.createElementVNode("div", {
+	            class: "el-overlay-message-box",
+	            onClick: _cache[8] || (_cache[8] = (...args) => _ctx.overlayEvent.onClick && _ctx.overlayEvent.onClick(...args)),
+	            onMousedown: _cache[9] || (_cache[9] = (...args) => _ctx.overlayEvent.onMousedown && _ctx.overlayEvent.onMousedown(...args)),
+	            onMouseup: _cache[10] || (_cache[10] = (...args) => _ctx.overlayEvent.onMouseup && _ctx.overlayEvent.onMouseup(...args))
 	          }, [
-	            _ctx.title !== null && _ctx.title !== void 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$1, [
-	              vue.createElementVNode("div", _hoisted_3$1, [
-	                _ctx.iconComponent && _ctx.center ? (vue.openBlock(), vue.createBlock(_component_el_icon, {
-	                  key: 0,
-	                  class: vue.normalizeClass(["el-message-box__status", _ctx.typeClass])
-	                }, {
-	                  default: vue.withCtx(() => [
-	                    (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.iconComponent)))
-	                  ]),
-	                  _: 1
-	                }, 8, ["class"])) : vue.createCommentVNode("v-if", true),
-	                vue.createElementVNode("span", null, vue.toDisplayString(_ctx.title), 1)
+	            vue.withDirectives((vue.openBlock(), vue.createElementBlock("div", {
+	              ref: "rootRef",
+	              role: "dialog",
+	              "aria-label": _ctx.title || "dialog",
+	              "aria-modal": "true",
+	              class: vue.normalizeClass([
+	                "el-message-box",
+	                _ctx.customClass,
+	                { "el-message-box--center": _ctx.center, "is-draggable": _ctx.draggable }
 	              ]),
-	              _ctx.showClose ? (vue.openBlock(), vue.createElementBlock("button", {
-	                key: 0,
-	                type: "button",
-	                class: "el-message-box__headerbtn",
-	                "aria-label": "Close",
-	                onClick: _cache[0] || (_cache[0] = ($event) => _ctx.handleAction(_ctx.distinguishCancelAndClose ? "close" : "cancel")),
-	                onKeydown: _cache[1] || (_cache[1] = vue.withKeys(vue.withModifiers(($event) => _ctx.handleAction(_ctx.distinguishCancelAndClose ? "close" : "cancel"), ["prevent"]), ["enter"]))
-	              }, [
-	                vue.createVNode(_component_el_icon, { class: "el-message-box__close" }, {
-	                  default: vue.withCtx(() => [
-	                    vue.createVNode(_component_close)
-	                  ]),
-	                  _: 1
-	                })
-	              ], 32)) : vue.createCommentVNode("v-if", true)
-	            ])) : vue.createCommentVNode("v-if", true),
-	            vue.createElementVNode("div", _hoisted_4$1, [
-	              vue.createElementVNode("div", _hoisted_5$1, [
-	                _ctx.iconComponent && !_ctx.center && _ctx.hasMessage ? (vue.openBlock(), vue.createBlock(_component_el_icon, {
+	              style: vue.normalizeStyle(_ctx.customStyle),
+	              onClick: _cache[7] || (_cache[7] = vue.withModifiers(() => {
+	              }, ["stop"]))
+	            }, [
+	              _ctx.title !== null && _ctx.title !== void 0 ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_2$1, [
+	                vue.createElementVNode("div", _hoisted_3$1, [
+	                  _ctx.iconComponent && _ctx.center ? (vue.openBlock(), vue.createBlock(_component_el_icon, {
+	                    key: 0,
+	                    class: vue.normalizeClass(["el-message-box__status", _ctx.typeClass])
+	                  }, {
+	                    default: vue.withCtx(() => [
+	                      (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.iconComponent)))
+	                    ]),
+	                    _: 1
+	                  }, 8, ["class"])) : vue.createCommentVNode("v-if", true),
+	                  vue.createElementVNode("span", null, vue.toDisplayString(_ctx.title), 1)
+	                ]),
+	                _ctx.showClose ? (vue.openBlock(), vue.createElementBlock("button", {
 	                  key: 0,
-	                  class: vue.normalizeClass(["el-message-box__status", _ctx.typeClass])
-	                }, {
-	                  default: vue.withCtx(() => [
-	                    (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.iconComponent)))
-	                  ]),
-	                  _: 1
-	                }, 8, ["class"])) : vue.createCommentVNode("v-if", true),
-	                _ctx.hasMessage ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6, [
-	                  vue.renderSlot(_ctx.$slots, "default", {}, () => [
-	                    !_ctx.dangerouslyUseHTMLString ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_7, vue.toDisplayString(_ctx.message), 1)) : (vue.openBlock(), vue.createElementBlock("p", {
-	                      key: 1,
-	                      innerHTML: _ctx.message
-	                    }, null, 8, _hoisted_8))
-	                  ])
-	                ])) : vue.createCommentVNode("v-if", true)
-	              ]),
-	              vue.withDirectives(vue.createElementVNode("div", _hoisted_9, [
-	                vue.createVNode(_component_el_input, {
-	                  ref: "inputRef",
-	                  modelValue: _ctx.inputValue,
-	                  "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.inputValue = $event),
-	                  type: _ctx.inputType,
-	                  placeholder: _ctx.inputPlaceholder,
-	                  class: vue.normalizeClass({ invalid: _ctx.validateError }),
-	                  onKeydown: vue.withKeys(vue.withModifiers(_ctx.handleInputEnter, ["prevent"]), ["enter"])
-	                }, null, 8, ["modelValue", "type", "placeholder", "class", "onKeydown"]),
-	                vue.createElementVNode("div", {
-	                  class: "el-message-box__errormsg",
-	                  style: vue.normalizeStyle({
-	                    visibility: !!_ctx.editorErrorMessage ? "visible" : "hidden"
+	                  type: "button",
+	                  class: "el-message-box__headerbtn",
+	                  "aria-label": "Close",
+	                  onClick: _cache[0] || (_cache[0] = ($event) => _ctx.handleAction(_ctx.distinguishCancelAndClose ? "close" : "cancel")),
+	                  onKeydown: _cache[1] || (_cache[1] = vue.withKeys(vue.withModifiers(($event) => _ctx.handleAction(_ctx.distinguishCancelAndClose ? "close" : "cancel"), ["prevent"]), ["enter"]))
+	                }, [
+	                  vue.createVNode(_component_el_icon, { class: "el-message-box__close" }, {
+	                    default: vue.withCtx(() => [
+	                      vue.createVNode(_component_close)
+	                    ]),
+	                    _: 1
 	                  })
-	                }, vue.toDisplayString(_ctx.editorErrorMessage), 5)
-	              ], 512), [
-	                [vue.vShow, _ctx.showInput]
-	              ])
-	            ]),
-	            vue.createElementVNode("div", _hoisted_10, [
-	              _ctx.showCancelButton ? (vue.openBlock(), vue.createBlock(_component_el_button, {
-	                key: 0,
-	                loading: _ctx.cancelButtonLoading,
-	                class: vue.normalizeClass([_ctx.cancelButtonClass]),
-	                round: _ctx.roundButton,
-	                size: _ctx.btnSize,
-	                onClick: _cache[3] || (_cache[3] = ($event) => _ctx.handleAction("cancel")),
-	                onKeydown: _cache[4] || (_cache[4] = vue.withKeys(vue.withModifiers(($event) => _ctx.handleAction("cancel"), ["prevent"]), ["enter"]))
-	              }, {
-	                default: vue.withCtx(() => [
-	                  vue.createTextVNode(vue.toDisplayString(_ctx.cancelButtonText || _ctx.t("el.messagebox.cancel")), 1)
+	                ], 32)) : vue.createCommentVNode("v-if", true)
+	              ], 512)) : vue.createCommentVNode("v-if", true),
+	              vue.createElementVNode("div", _hoisted_4$1, [
+	                vue.createElementVNode("div", _hoisted_5$1, [
+	                  _ctx.iconComponent && !_ctx.center && _ctx.hasMessage ? (vue.openBlock(), vue.createBlock(_component_el_icon, {
+	                    key: 0,
+	                    class: vue.normalizeClass(["el-message-box__status", _ctx.typeClass])
+	                  }, {
+	                    default: vue.withCtx(() => [
+	                      (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.iconComponent)))
+	                    ]),
+	                    _: 1
+	                  }, 8, ["class"])) : vue.createCommentVNode("v-if", true),
+	                  _ctx.hasMessage ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_6, [
+	                    vue.renderSlot(_ctx.$slots, "default", {}, () => [
+	                      !_ctx.dangerouslyUseHTMLString ? (vue.openBlock(), vue.createElementBlock("p", _hoisted_7, vue.toDisplayString(_ctx.message), 1)) : (vue.openBlock(), vue.createElementBlock("p", {
+	                        key: 1,
+	                        innerHTML: _ctx.message
+	                      }, null, 8, _hoisted_8))
+	                    ])
+	                  ])) : vue.createCommentVNode("v-if", true)
 	                ]),
-	                _: 1
-	              }, 8, ["loading", "class", "round", "size"])) : vue.createCommentVNode("v-if", true),
-	              vue.withDirectives(vue.createVNode(_component_el_button, {
-	                ref: "confirmRef",
-	                type: "primary",
-	                loading: _ctx.confirmButtonLoading,
-	                class: vue.normalizeClass([_ctx.confirmButtonClasses]),
-	                round: _ctx.roundButton,
-	                disabled: _ctx.confirmButtonDisabled,
-	                size: _ctx.btnSize,
-	                onClick: _cache[5] || (_cache[5] = ($event) => _ctx.handleAction("confirm")),
-	                onKeydown: _cache[6] || (_cache[6] = vue.withKeys(vue.withModifiers(($event) => _ctx.handleAction("confirm"), ["prevent"]), ["enter"]))
-	              }, {
-	                default: vue.withCtx(() => [
-	                  vue.createTextVNode(vue.toDisplayString(_ctx.confirmButtonText || _ctx.t("el.messagebox.confirm")), 1)
-	                ]),
-	                _: 1
-	              }, 8, ["loading", "class", "round", "disabled", "size"]), [
-	                [vue.vShow, _ctx.showConfirmButton]
+	                vue.withDirectives(vue.createElementVNode("div", _hoisted_9, [
+	                  vue.createVNode(_component_el_input, {
+	                    ref: "inputRef",
+	                    modelValue: _ctx.inputValue,
+	                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.inputValue = $event),
+	                    type: _ctx.inputType,
+	                    placeholder: _ctx.inputPlaceholder,
+	                    class: vue.normalizeClass({ invalid: _ctx.validateError }),
+	                    onKeydown: vue.withKeys(vue.withModifiers(_ctx.handleInputEnter, ["prevent"]), ["enter"])
+	                  }, null, 8, ["modelValue", "type", "placeholder", "class", "onKeydown"]),
+	                  vue.createElementVNode("div", {
+	                    class: "el-message-box__errormsg",
+	                    style: vue.normalizeStyle({
+	                      visibility: !!_ctx.editorErrorMessage ? "visible" : "hidden"
+	                    })
+	                  }, vue.toDisplayString(_ctx.editorErrorMessage), 5)
+	                ], 512), [
+	                  [vue.vShow, _ctx.showInput]
+	                ])
+	              ]),
+	              vue.createElementVNode("div", _hoisted_10, [
+	                _ctx.showCancelButton ? (vue.openBlock(), vue.createBlock(_component_el_button, {
+	                  key: 0,
+	                  loading: _ctx.cancelButtonLoading,
+	                  class: vue.normalizeClass([_ctx.cancelButtonClass]),
+	                  round: _ctx.roundButton,
+	                  size: _ctx.btnSize,
+	                  onClick: _cache[3] || (_cache[3] = ($event) => _ctx.handleAction("cancel")),
+	                  onKeydown: _cache[4] || (_cache[4] = vue.withKeys(vue.withModifiers(($event) => _ctx.handleAction("cancel"), ["prevent"]), ["enter"]))
+	                }, {
+	                  default: vue.withCtx(() => [
+	                    vue.createTextVNode(vue.toDisplayString(_ctx.cancelButtonText || _ctx.t("el.messagebox.cancel")), 1)
+	                  ]),
+	                  _: 1
+	                }, 8, ["loading", "class", "round", "size"])) : vue.createCommentVNode("v-if", true),
+	                vue.withDirectives(vue.createVNode(_component_el_button, {
+	                  ref: "confirmRef",
+	                  type: "primary",
+	                  loading: _ctx.confirmButtonLoading,
+	                  class: vue.normalizeClass([_ctx.confirmButtonClasses]),
+	                  round: _ctx.roundButton,
+	                  disabled: _ctx.confirmButtonDisabled,
+	                  size: _ctx.btnSize,
+	                  onClick: _cache[5] || (_cache[5] = ($event) => _ctx.handleAction("confirm")),
+	                  onKeydown: _cache[6] || (_cache[6] = vue.withKeys(vue.withModifiers(($event) => _ctx.handleAction("confirm"), ["prevent"]), ["enter"]))
+	                }, {
+	                  default: vue.withCtx(() => [
+	                    vue.createTextVNode(vue.toDisplayString(_ctx.confirmButtonText || _ctx.t("el.messagebox.confirm")), 1)
+	                  ]),
+	                  _: 1
+	                }, 8, ["loading", "class", "round", "disabled", "size"]), [
+	                  [vue.vShow, _ctx.showConfirmButton]
+	                ])
 	              ])
+	            ], 14, _hoisted_1$1)), [
+	              [_directive_trap_focus]
 	            ])
-	          ], 14, _hoisted_1$1)), [
-	            [_directive_trap_focus]
-	          ])
+	          ], 32)
 	        ]),
 	        _: 3
-	      }, 8, ["z-index", "overlay-class", "mask", "onClick"]), [
+	      }, 8, ["z-index", "overlay-class", "mask"]), [
 	        [vue.vShow, _ctx.visible]
 	      ])
 	    ]),
@@ -48513,8 +48654,11 @@
 	exports.useDelayedRender = useDelayedRender;
 	exports.useDelayedToggle = useDelayedToggle;
 	exports.useDelayedToggleProps = useDelayedToggleProps;
+	exports.useDeprecateAppendToBody = useDeprecateAppendToBody;
+	exports.useDeprecated = useDeprecated;
 	exports.useDialog = useDialog;
 	exports.useDisabled = useDisabled$1;
+	exports.useDraggable = useDraggable;
 	exports.useEscapeKeydown = useEscapeKeydown;
 	exports.useFocus = useFocus;
 	exports.useFormItem = useFormItem;
