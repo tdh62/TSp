@@ -66,6 +66,9 @@
                 <el-form-item label="文章标题：">
                     <el-input placeholder="输入文章标题" v-model="newarticle.atitle" clearable></el-input>
                 </el-form-item>
+                <el-form-item label="作者：">
+                    <el-input placeholder="输入作者" v-model="newarticle.author" clearable></el-input>
+                </el-form-item>
 
                 <el-form-item label="文章类型：">
                     <el-radio-group v-model="staticfile">
@@ -79,20 +82,25 @@
                         <el-radio :label="'html'" v-if="staticfile">HTML</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="作者：">
-                    <el-input placeholder="输入作者" v-model="newarticle.author" clearable></el-input>
-                </el-form-item>
                 <el-form-item label="时间：">
                     <el-date-picker placeholder="发布日期" type="date" v-model="pubtime" clearable></el-date-picker>
                 </el-form-item>
-                <el-form-item label="分类：">
-                    <el-input placeholder="输入分类，用英文逗号隔开" v-model="newarticle.aclass" clearable></el-input>
+                <el-form-item label="分类：" v-if="!staticfile">
+                    <el-select v-model="newarticle.aclass" class="m-2" placeholder="选择分类" size="large">
+                        <el-option
+                                v-for="item in aclass_list"
+                                :key="item.cid"
+                                :label="item.cname"
+                                :value="item.cid">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
 
                 <div style="padding-left: 20px">
                     <el-row>
                         <el-button type="primary" @click="save_cg" plain>保存草稿</el-button>
-                        <el-button type="warning" @click="load_cg" plain>读取草稿（放弃更改）</el-button>
+                        <el-button type="warning" @click="load_cg" plain>读取草稿</el-button>
+                        <el-button type="success" @click="openbed" plain>打开图床</el-button>
                     </el-row>
                     <div class="upload-save-tips-div">
                         <p class="upload-save-tips" :style="{color:tipscolor}" v-html="tips"></p>

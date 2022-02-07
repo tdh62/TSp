@@ -5,6 +5,10 @@ upapp = Vue.createApp({
             "tips":"请稍后",
             "loading":true,
             "tipscolor":"#ffffff",
+            "aclass_list":[{
+                cid: '0',
+                cname: '默认分类',
+            }],
             "newarticle":{
                 "_new_article":false,
                 "_staticfile":false,  // 固定链接文章
@@ -13,7 +17,7 @@ upapp = Vue.createApp({
                 "atitle":"",  // 文章标题
                 "author":"",  // 作者
                 "pubtimer":new Date(),  // 发布时间
-                "aclass":"",  // 文章分类
+                "aclass":"0",  // 文章分类
                 "tags":"",  // 标签
                 "spimg":"",  // 特色图像
 
@@ -79,6 +83,9 @@ upapp = Vue.createApp({
         }
     },
     methods:{
+        openbed(){
+            window.open('/admin/imgbed.html')
+        },
         get_new_aid(){
             // 获取新 ID
             let _this = this
@@ -133,6 +140,7 @@ upapp = Vue.createApp({
             delete_from_local("new_article_cg")
         },
         save_article(){
+            // 保存文章
             this.loading = true
             this.save_cg()
             if (this.staticfile){
@@ -175,6 +183,7 @@ upapp = Vue.createApp({
                     true,(e)=>console.error(e))
             }
             else{
+                // 普通文章
                 const tdata = {
                     "aid":this.newarticle.aid,  // 文章 ID
                     "atitle":this.newarticle.atitle,  // 文章标题
@@ -192,15 +201,26 @@ upapp = Vue.createApp({
                 }
                 saves_remote("/article/" + this.newarticle.aid + ".json",tdata)  // 保存元数据
                 saves_remote("/article/" + this.newarticle.aid + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
-                const sdata = tdata
+                let sdata = tdata
                 delete sdata['keyword']
                 delete sdata['describe']
                 reads_remote("/articles.json",(article_list)=>{
                     article_list[this.newarticle.aid.toString()] = sdata
                     saves_remote("/articles.json",article_list)
                 },true) // 保存文章到列表
-                clearInterval(this.autosave_interval)
-                // TODO: 根据分类更细分类列表
+                // 更新分类
+                this.aclass_list.forEach((e)=>{
+                    e.article_count = (parseInt(e.article_count)+1).toString()
+                })
+                saves_remote("/class/class.json",this.aclass_list)
+
+                // 更新分类目录
+                reads_remote("/class/class" + this.newarticle.aclass + ".json",(article_list)=>{
+                    tdata['describe'] = this.newarticle.describe
+                    article_list[this.newarticle.aid.toString()] = tdata
+                    saves_remote("/class/class" + this.newarticle.aclass + ".json",article_list)
+                },true,(e)=>{console.error(e);alert("分类保存失败")})
+
                 alert("保存成功")
             }
             this.loading = false
@@ -315,7 +335,13 @@ upapp = Vue.createApp({
 
     },
     mounted(){
-
+        let _this = this
+        this.loading = true
+        reads_remote("/class/class.json",(r)=>{
+            _this.aclass_list = r
+            console.log(r)
+            _this.loading = false
+        },true,(e)=>{console.error(e);alert("分类加载失败")})
     }
 
 })
