@@ -30,6 +30,7 @@
     <script type="application/javascript" src="/js/articleupload.js"></script>
 
     <script src="../../component/editor/patch.js"></script>
+    <script src="../../js/headerAndFooter.js"></script>
 
 
 </head>
@@ -43,6 +44,9 @@
 
         </el-header>
         <el-main>
+            <h1>
+                {{page_title}}
+            </h1>
             <br />
             <el-form label-width="100px">
                 <el-form-item label="文章 ID：" v-show="!staticfile">
@@ -131,7 +135,7 @@
                 </el-form-item>
             </el-form>
         </el-main>
-        <el-footer>
+        <el-footer id="site-footer">
 
         </el-footer>
     </el-container>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>初始化</title>
+    <script src="../../global/settings.js"></script>
+
+    <script type='text/javascript' src='/global/js/md5.js'></script>
+    <script type='text/javascript' src='/global/js/hmac-sha1.js'></script>
+    <script type='text/javascript' src='/js/common.js'></script>
+
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/component/editor/css/editormd.css">
+    <link rel="stylesheet" href="/component/editor/css/style.css">
+    <link rel="stylesheet" href="/global/css/element-plus.css">
+    <link rel="stylesheet" href="/css/words.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+
+    <script type="application/javascript" src="/global/js/axios.js"></script>
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+
+    <script src="/component/storage/local.js"></script>
+    <script src="/component/storage/COS.js"></script>
+
+    <script src="/component/storage/remote.js"></script>
+    <script type="application/javascript" src="/js/articleupload.js"></script>
+
+    <script src="/component/editor/patch.js"></script>
+    <style>
+        div{text-align: center;margin: auto}
+        body{background: #e0e0e0}
+    </style>
+    <script src="../js/headerAndFooter.js"></script>
+</head>
+<body>
+<div id="login-main" class="login-window">
+    <el-container v-loading="loading">
+        <el-row align="middle">
+            <el-card header="初始化数据" style="width: 700px">
+                <el-form label-width="150px" class="login-window">
+                    <p>！！！重复初始化将导致数据被覆盖！！！</p>
+                    <p v-if="!logined">请登录</p>
+                    <br />
+                    <br />
+                    <el-button type="danger" @click="doinit" :disabled="!logined">执行初始化</el-button>
+                    <p style="font-size: 1em" v-text="tips"></p>
+                </el-form>
+            </el-card>
+        </el-row>
+    </el-container>
+</div>
+
+<script type="application/javascript">
+    lapp = Vue.createApp({
+        data(){
+            return {"loading":false}
+        },
+        computed:{
+            logined(){
+                return remoteStorage.get_login_status()
+            }
+        },
+        mounted(){
+
+        },
+        methods:{
+            doinit(){
+                let _this = this
+                this.loading = true
+                // 依次初始化
+                // 下一篇文章 ID
+                saves_remote("/settings/next-article.txt",{"data":"0"},"application/json",()=>{
+                    // 文章列表
+                    saves_remote("/articles.json",{},"application/json",()=>{
+                        // 图床
+                        saves_remote("/imgbed/imagebed.json", {"pages":0,"datas":[]},"application/json",()=>{
+                            // 分类列表
+                            saves_remote("/class/class.json",[{"cid":"0","cname":"默认分类","description":"默认的分类",
+                                "article_count":"4","cc1":"","cc2":""}],"application/json",()=>{
+                                // 默认分类
+                                saves_remote("/class/class0.json",{},"application/json",()=>{
+                                    // 固定链接页面
+                                    saves_remote("/static-link.json",{},"application/json",()=>{
+                                        // ...
+                                        alert("初始化完成！")
+                                        _this.loading = false
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            }
+        }
+    })
+    lapp.use(ElementPlus)
+    v_app = lapp.mount("#login-main")
+</script>
+</body>
+</html>
