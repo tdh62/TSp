@@ -3,14 +3,50 @@
 CopyRight @tdh
 */
 
-
-
-html,body,#main-body,.el-container,.login-window {
+html,body,#main-body,.el-container,.login-window,#article_main {
     /*页面占满整个布局*/
     padding: 0;
     margin: 0;
     height: 100%;
 }
+el-container{
+    margin-bottom: 7px;
+}
+/*---------------------------------页眉内容----------------------------------*/
+.header-row{
+    width: 100%;
+}
+
+.site-titles{
+    text-align: left;
+    height: 50px;
+    margin-top: 10px;
+}
+.site-title{
+    font-size: 2em;
+    color: black;
+    font-weight:300;
+}
+.site-sub-title{
+    font-size: 1.5em;
+    font-weight:400;
+}
+.site-header-map{
+    height: 40px;
+    text-align: left;
+    margin-left: 30px;
+}
+.el-menu{
+    --el-menu-hover-bg-color:#fff!important;
+    --el-menu-item-height: 30px;
+}
+el-menu-item{
+    font-size: 1em;
+}
+#site-footer{
+    height: 40px;
+}
+/*---------------------------------------------------------------------------*/
 
 .login-form{
     padding: 10%;

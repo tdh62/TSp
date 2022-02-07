@@ -10,6 +10,10 @@ const aapp = Vue.createApp({
             "scrtimer":null,
             "scrollnum":0,
             "loading":true,
+            "aclass_list":[{
+                cid: '0',
+                cname: '默认分类',
+            }],
         }
     },
     computed:{

@@ -256,9 +256,12 @@ upapp = Vue.createApp({
             })
 
             // 修改 url
-            let nurl
+            let nurl = document.URL
+            if (document.URL.endsWith("html")){
+                nurl += "?"
+            }
             if (getQueryVariable("link") == null){
-                nurl = document.URL + "&link=" + this.newarticle.staticlink
+                nurl += "&link=" + this.newarticle.staticlink
             }
             if (getQueryVariable("type") == null){
                 nurl += "&type=static"
