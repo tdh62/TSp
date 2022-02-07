@@ -3,6 +3,7 @@ upapp = Vue.createApp({
         return {
             "page_title":"编辑文章",
             "tips":"请稍后",
+            "loading":true,
             "tipscolor":"#ffffff",
             "newarticle":{
                 "_new_article":false,
@@ -131,6 +132,7 @@ upapp = Vue.createApp({
             delete_from_local("new_article_cg")
         },
         save_article(){
+            this.loading = true
             this.save_cg()
             if (this.staticfile){
                 // 固定链接文章
@@ -200,6 +202,7 @@ upapp = Vue.createApp({
                 // TODO: 根据分类更细分类列表
                 alert("保存成功")
             }
+            this.loading = false
         },
         set_static_link($event,pub = false){
             // 设置固定链接
@@ -232,9 +235,14 @@ upapp = Vue.createApp({
             })
 
             // 修改 url
+            let nurl
             if (getQueryVariable("link") == null){
-                history.pushState({},"",document.URL + "&link=" + this.newarticle.staticlink)
+                nurl = document.URL + "&link=" + this.newarticle.staticlink
             }
+            if (getQueryVariable("type") == null){
+                nurl += "&type=static"
+            }
+            history.pushState({},"",nurl)
             return sdata
         },
         load_art(aid){
@@ -262,8 +270,7 @@ upapp = Vue.createApp({
                     MDEdit.appendMarkdown(this.artinfo)
                     this.tips = "加载完成"
                 },false,()=>{alert("文章内容读取失败，请刷新重试")})
-
-
+                this.loading = false
             },true,()=>{alert("文章数据读取失败，请检查网络连接并刷新重试")})
             $("#artinfos")[0].value = this.artinfo
         },
@@ -279,7 +286,7 @@ upapp = Vue.createApp({
                 this.newarticle.tags = tdata.tags
                 this.newarticle.spimg = tdata.spimg
                 this.newarticle.staticlink = tdata.staticlink
-                this.newarticle.saveto = tdata.saveto
+                this.saveto = tdata.saveto
                 this.newarticle.keyword = tdata.keyword
                 this.newarticle.describe = tdata.describe
                 this.newarticle.static_link_seted = true  // 固定链接已设置
@@ -300,6 +307,7 @@ upapp = Vue.createApp({
                 else{
                     this.tips = "找到了固定链接，但文章内容未保存"
                 }
+                this.loading = false
 
             },true,()=>{alert("文章数据读取失败，请检查网络连接并刷新重试")})
         },

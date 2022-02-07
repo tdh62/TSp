@@ -5,11 +5,15 @@ CopyRight @tdh
 
 
 
-html,body,#main-body,.el-container {
+html,body,#main-body,.el-container,.login-window {
     /*页面占满整个布局*/
     padding: 0;
     margin: 0;
     height: 100%;
+}
+
+.login-form{
+    padding: 10%;
 }
 
 .upload-save-tips-div{

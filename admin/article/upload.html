@@ -36,13 +36,13 @@
 <body>
 
 <div id="uploader">
-    <el-container>
+
+    <el-container v-loading="loading">
         <el-header>
+
+
         </el-header>
         <el-main>
-            <h1>
-                {{page_title}}
-            </h1>
             <br />
             <el-form label-width="100px">
                 <el-form-item label="文章 ID：" v-show="!staticfile">
@@ -188,6 +188,7 @@
                     // 新静态文章
                     v_app.new_article = true
                     v_app.staticfile = true
+                    v_app.loading = false
                 }
                 else{
                     v_app.load_static(stlink)
@@ -202,6 +203,7 @@
                     // 检查草稿
                     v_app.new_article = true
                     v_app.load_cg(init=true)
+                    v_app.loading = false
                 }
                 else{
                     // 读取文章

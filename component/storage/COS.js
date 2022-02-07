@@ -13,6 +13,14 @@
  */
 
 class TencentCOS{
+    remote_name(){
+        return "腾讯云对象存储(COS)"
+    }
+
+    get_login_status(){
+        return read_from_local("AccessKey") !== "" && read_from_local("AccessKey") != null
+    }
+
     set_user_name(s){
         return this.setAccessID(s)
     }

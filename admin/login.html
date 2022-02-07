@@ -15,21 +15,43 @@
     <script src="../component/storage/COS.js"></script>
     <link rel="stylesheet" href="../css/words.css">
     <link rel="stylesheet" href="../css/layouts.css">
+    <style>
+        div{text-align: center;margin: auto}
+        body{background: #d0d0d7}
+    </style>
 </head>
 <body>
-<div id="login-main">
-    <el-row>
-        <el-form label-width="150px">
-            <el-form-item label="用户名(Access ID)：">
-                <el-input v-model="uname"></el-input>
-            </el-form-item>
-            <el-form-item label="密码(Access Key)：">
-                <el-input type="password" v-model="passw"></el-input>
-            </el-form-item>
-            <el-button type="primary" @click="dologin">登录</el-button>
-
-        </el-form>
-    </el-row>
+<div id="login-main" class="login-window">
+    <el-container>
+        <el-row align="middle">
+            <el-card header="系统登录">
+                    <el-form label-width="150px" class="login-window">
+                        <el-container>
+                            <div>
+                                <p class="login-tips-o">
+                                    使用的存储后端：{{ backhand }}
+                                    <br />
+                                    <br />
+                                    当前用户凭证：<span v-html="login_state"></span>
+                                    <span v-if="logined">
+                                         &nbsp;前往<a href='/admin/index.html' class="login-tips">管理页面</a>
+                                    </span>
+                                </p>
+                            </div>
+                        </el-container>
+                        <el-form-item label="用户名(Access ID)：">
+                            <el-input v-model="uname"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码(Access Key)：">
+                            <el-input type="password" v-model="passw"></el-input>
+                        </el-form-item>
+                        <el-button type="primary" @click="dologin" :disabled="logined">登录</el-button> &nbsp;&nbsp;
+                        <el-button type="info" @click="dologout" :disabled="!logined">退出</el-button>&nbsp;&nbsp;
+                        <el-button type="danger" @click="doclear">清理缓存</el-button>
+                    </el-form>
+            </el-card>
+        </el-row>
+    </el-container>
 </div>
 
 <script type="application/javascript">
@@ -37,8 +59,23 @@
         data(){
             return {"uname":"","passw":""}
         },
+        computed:{
+            login_state(){
+                return remoteStorage.get_login_status()?"已录入":"未录入"
+            },
+            logined(){
+                return remoteStorage.get_login_status()
+            },
+            backhand(){
+                return remoteStorage.remote_name()
+            }
+        },
+        mounted(){
+
+        },
         methods:{
             dologin(){
+                // 登录
                 if (this.uname === "" || this.passw === ""){
                     alert("请输入登录信息")
                     return
@@ -46,7 +83,19 @@
                 remoteStorage.set_user_name(this.uname)
                 remoteStorage.set_password(this.passw)
                 alert("登录成功")
+            },
+            dologout(){
+                // 注销
+                remoteStorage.clear_user_name()
+                remoteStorage.clear_password()
+                alert("登录信息已清理")
+            },
+            doclear(){
+                // 清空缓存
+                clear_all_saves()
+                alert("本地缓存的临时数据已删除")
             }
+
         }
     })
     lapp.use(ElementPlus)

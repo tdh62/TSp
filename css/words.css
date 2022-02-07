@@ -19,3 +19,22 @@ p{
     text-align: left;
     margin-left: 2em;
 }
+
+.login-tips{
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-decoration: none;
+    outline: 0;
+    cursor: pointer;
+    padding: 0;
+    color: #409eff;
+}
+
+
+.login-tips-o{
+    font-size: 1em;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}

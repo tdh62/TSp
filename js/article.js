@@ -9,6 +9,7 @@ const aapp = Vue.createApp({
             "article_link":null,
             "scrtimer":null,
             "scrollnum":0,
+            "loading":true,
         }
     },
     computed:{
@@ -34,6 +35,7 @@ const aapp = Vue.createApp({
     methods:{
         show_art(u){
             // 从 u 获取MarkDown 并显示
+            let _this = this
             axios.get(u).then((r)=>{
                 MDView = editormd.markdownToHTML("mdview", {
                     markdown: r.data,
@@ -47,7 +49,8 @@ const aapp = Vue.createApp({
                     tex: true,  // 默认不解析
                     flowChart: true,  // 默认不解析
                     sequenceDiagram: true,  // 默认不解析
-                });
+                })
+                _this.loading = false
             }).catch((e)=>{alert("加载失败，请重试");console.log(e)})
         },
         load_aid(){

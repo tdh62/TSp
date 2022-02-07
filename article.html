@@ -39,12 +39,14 @@
 </head>
 <body>
 <div id="article_main">
-    <el-container>
+
+    <el-container v-loading="loading">
         <el-header height="100px" tag="div">
             <p>
                 页眉
             </p>
         </el-header>
+
         <el-container>
 
 
@@ -59,7 +61,7 @@
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
                     <div ref="innerRef">
                         <div id="mdview">
-                            <textarea style="display: none">请稍后</textarea>
+                            <textarea style="display: none">页面正在加载中，请稍候...（若长时间未响应请检查网络连接）</textarea>
                         </div>
                     </div>
                 </el-scrollbar>
