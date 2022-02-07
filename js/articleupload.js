@@ -81,8 +81,9 @@ upapp = Vue.createApp({
     methods:{
         get_new_aid(){
             // 获取新 ID
+            let _this = this
             read_from_remote("next-article",function (nid){
-                v_app.aid = nid
+                _this.newarticle.aid = nid
                 save_to_remote("next-article",parseInt(nid)+1)
             },(e)=>{console.log(e)})
         },
