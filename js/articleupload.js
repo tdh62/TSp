@@ -1,6 +1,11 @@
 upapp = Vue.createApp({
     data(){
         return {
+            "site_info":{
+                "site_title":"青橙屋",
+                "site_sub_title":"见到你很高兴",
+            },
+
             "page_title":"编辑文章",
             "tips":"请稍后",
             "loading":true,
