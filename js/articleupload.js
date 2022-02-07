@@ -1,46 +1,72 @@
 upapp = Vue.createApp({
     data(){
         return {
-            "_new_article":false,
             "page_title":"编辑文章",
             "tips":"请稍后",
             "tipscolor":"#ffffff",
-            "aid":"",  // 文章 ID
-            "atitle":"",  // 文章标题
-            "author":"",  // 作者
-            "pubtimer":new Date(),  // 发布时间
-            "aclass":"",  // 文章分类
-            "tags":"",  // 标签
-            "spimg":"",  // 特色图像
-            "staticlink":"",  // 固定链接
-            "keyword":"",  // SEO 关键字
-            "describe":"",  // SEO 描述
-            "cc1":"",  // 备用字段 1
-            "cc2":"",  // 备用字段 2
-            "cc3":"",  // 备用字段 3
+            "newarticle":{
+                "_new_article":false,
+                "_staticfile":false,  // 固定链接文章
+                "_saveto":"md",  // 保存文件的类型
+                "aid":"",  // 文章 ID
+                "atitle":"",  // 文章标题
+                "author":"",  // 作者
+                "pubtimer":new Date(),  // 发布时间
+                "aclass":"",  // 文章分类
+                "tags":"",  // 标签
+                "spimg":"",  // 特色图像
+
+                "staticlink":"",  // 固定链接
+                "static_link_seted":false,  // 固定链接已设置
+
+                "keyword":"",  // SEO 关键字
+                "describe":"",  // SEO 描述
+                "cc1":"",  // 备用字段 1
+                "cc2":"",  // 备用字段 2
+                "cc3":"",  // 备用字段 3
+
+            },
             "artinfo":"", // 文章内容
 
-            "autosave_interval":null, // 自动保存
+            "autosave_interval":null, // 自动保存调度
+            "static_btn_type":"primary",  // 固定链接按钮类型
+            "static_setting":false,  // 正在设置固定链接
+            "static_deleting":false,  // 正在删除固定链接
+            "del_static_btn_type":"danger", // 删除固定链接类型
 
-            // "static_btn_type":"primary",  // 固定链接按钮类型
-            // "static_setting":false,
-            // "static_deleting":false,
-            // "del_static_btn_type":"danger", // 删除固定链接类型
         }
     },
     computed:{
+        "staticfile":{
+            get(){return this.newarticle._staticfile},
+            set(v){
+                this.newarticle._staticfile = v
+                if (!v){
+                    this.saveto = "md"
+                    if (this.newarticle.aid === ""){
+                        this.get_new_aid()
+                    }
+                }
+            }
+        },
+        "saveto":{
+            get(){return this.newarticle._saveto},
+            set(v){
+                this.newarticle._saveto = v
+            }
+        },
         "pubtime":{
             get(){
-                return new Date(this.pubtimer)
+                return new Date(this.newarticle.pubtimer)
             },
             set(v){
-                this.pubtimer = new Date(v)
+                this.newarticle.pubtimer = new Date(v)
             }
         },
         new_article:{
-            get(){return this._new_article},
+            get(){return this.newarticle._new_article},
             set(v){
-                this._new_article = v
+                this.newarticle._new_article = v
                 if (v){
                     this.page_title = "发布新文章"
                 }
@@ -52,24 +78,20 @@ upapp = Vue.createApp({
         }
     },
     methods:{
+        get_new_aid(){
+            // 获取新 ID
+            read_from_remote("next-article",function (nid){
+                v_app.aid = nid
+                save_to_remote("next-article",parseInt(nid)+1)
+            },(e)=>{console.log(e)})
+        },
         save_cg(){
             // 保存草稿
             this.artinfo = $("#artinfos")[0].value
-            save_to_local("cg_aid",this.aid)
-            save_to_local("cg_atitle",this.atitle)
-            save_to_local("cg_author",this.author)
-            save_to_local("cg_pubtime",this.pubtime)
-            save_to_local("cg_tags",this.tags)
-            save_to_local("cg_spimg",this.spimg)
-            // save_to_local("cg_staticlink",this.staticlink)
-            save_to_local("cg_keyword",this.keyword)
-            save_to_local("cg_describe",this.describe)
-            save_to_local("cg_cc1",this.cc1)
-            save_to_local("cg_cc2",this.cc2)
-            save_to_local("cg_cc3",this.cc3)
-            save_to_local("cg_article",this.artinfo)
+            save_to_local("new_article",this.newarticle.new_article)
 
-            save_to_local("new_article",this.new_article)
+            saves("new_article_cg",this.newarticle,"local","string")
+
             this.tips = "草稿已保存（每 5 分钟将自动保存）： " + (new Date).toLocaleTimeString()
             this.tipscolor = "red"
             setTimeout(() =>{
@@ -82,29 +104,13 @@ upapp = Vue.createApp({
             if (this.artinfo == null){
                 if (init){
                     // 无草稿，获取新文章 ID
-                    read_from_remote("next-article",function (nid){
-                        v_app.aid = nid
-                        save_to_remote("next-article",parseInt(nid)+1)
-                    },(e)=>{console.log(e)})
+                    this.get_new_aid()
                 }
                 else{
                     MDEdit.clear()
                 }
                 return
             }
-            this.aid = read_from_local("cg_aid")
-            this.atitle = read_from_local("cg_atitle")
-            this.author = read_from_local("cg_author")
-            this.pubtime = read_from_local("cg_pubtime")
-            this.tags = read_from_local("cg_tags")
-            this.spimg = read_from_local("cg_spimg")
-            // this.staticlink = read_from_local("cg_staticlink")
-            this.keyword = read_from_local("cg_keyword")
-            this.describe = read_from_local("cg_describe")
-            this.cc1 = read_from_local("cg_cc1")
-            this.cc2 = read_from_local("cg_cc2")
-            this.cc3 = read_from_local("cg_cc3")
-
             $("#artinfos")[0].value = this.artinfo
             MDEdit.clear()
             MDEdit.appendMarkdown(this.artinfo)
@@ -116,73 +122,139 @@ upapp = Vue.createApp({
                 this.tips = "读出来啦"
             }
 
+            this.newarticle = JSON.parse(read_from_local("new_article_cg")) // TODO
             v_app.tipscolor = "#7b7b7b"
-            this.new_article = read_from_local("new_article")
         },
         delete_cg(){
             // 删除草稿
-            delete_from_local("cg_aid")
-            delete_from_local("cg_atitle")
-            delete_from_local("cg_author")
-            delete_from_local("cg_pubtime")
-            delete_from_local("cg_tags")
-            delete_from_local("cg_spimg")
-            // delete_from_local("cg_staticlink")
-            delete_from_local("cg_keyword")
-            delete_from_local("cg_describe")
-            delete_from_local("cg_cc1")
-            delete_from_local("cg_cc2")
-            delete_from_local("cg_cc3")
             delete_from_local("cg_article")
+            delete_from_local("new_article_cg")
         },
         save_article(){
-            this.save_cg()
-            const tdata = {
-                "aid":this.aid,  // 文章 ID
-                "atitle":this.atitle,  // 文章标题
-                "author":this.author,  // 作者
-                "pubtime":this.pubtimer.getTime(),  // 发布时间
-                "aclass":this.aclass,  // 文章分类
-                "tags":this.tags,  // 标签
-                "spimg":this.spimg,  // 特色图像
-                // "staticlink":"",  // 固定链接
-                "keyword":this.keyword,  // SEO 关键字
-                "describe":this.describe,  // SEO 描述
-                "cc1":this.cc1,  // 备用字段 1
-                "cc2":this.cc2,  // 备用字段 2
-                "cc3":this.cc3,  // 备用字段 3
+            this.newarticle.save_cg()
+            if (this.staticfile){
+                // 固定链接文章
+
+                // 确保以 / 开头
+                if (!this.newarticle.staticlink.startsWith("/")){
+                    this.newarticle.staticlink = "/" + this.newarticle.staticlink
+                }
+                if (this.saveto === "md"){
+                    // 保存 MarkDown 和 对应 HTML
+                    saves_remote(this.newarticle.staticlink + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
+
+                    // 生成 HTML 内容
+                    axios.get("/article.html").then((r)=>{
+                        let r_datas = r.data.replace("v_app.load_aid()", "v_app.load_static('" + this.newarticle.staticlink + ".md')")
+                        saves_remote(this.newarticle.staticlink + ".html",r_datas,"text/html",
+                            (res)=>{console.log(res)})
+                    }).catch((e)=>{console.error(e)})
+                }
+                else{
+                    // 直接保存 HTML
+                    saves_remote(this.newarticle.staticlink + ".html", MDEdit.getHTML(),"text/html",
+                        (res)=>{console.log(res)})
+                }
+
+                // 更新元数据
+                sdata = this.set_static_link(null,true)
+
+                // 添加到列表
+                reads_remote("/static-link.json",(r)=>{
+                        let slist = r.data
+                        slist[this.newarticle.staticlink] = sdata
+                        saves_remote("/static-link.json",slist,"application/json",(r)=>{
+                            console.log(r)
+                            alert("保存成功")
+                        })
+                    },
+                    true,(e)=>console.error(e))
             }
-            saves_remote("/article/" + this.aid + ".json",tdata)  // 保存元数据
-            saves_remote("/article/" + this.aid + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
-            const sdata = tdata
-            delete sdata['keyword']
-            delete sdata['describe']
-            reads_remote("/articles.json",(article_list)=>{
-                article_list[this.aid.toString()] = sdata
-                saves_remote("/articles.json",article_list)
-            },true) // 保存文章到列表
-            clearInterval(this.autosave_interval)
-            // TODO: 根据分类更细分类列表
-            alert("保存成功")
+            else{
+                const tdata = {
+                    "aid":this.newarticle.aid,  // 文章 ID
+                    "atitle":this.newarticle.atitle,  // 文章标题
+                    "author":this.newarticle.author,  // 作者
+                    "pubtime":this.newarticle.pubtimer.getTime(),  // 发布时间
+                    "aclass":this.newarticle.aclass,  // 文章分类
+                    "tags":this.newarticle.tags,  // 标签
+                    "spimg":this.newarticle.spimg,  // 特色图像
+                    // "staticlink":"",  // 固定链接
+                    "keyword":this.newarticle.keyword,  // SEO 关键字
+                    "describe":this.newarticle.describe,  // SEO 描述
+                    "cc1":this.newarticle.cc1,  // 备用字段 1
+                    "cc2":this.newarticle.cc2,  // 备用字段 2
+                    "cc3":this.newarticle.cc3,  // 备用字段 3
+                }
+                saves_remote("/article/" + this.newarticle.aid + ".json",tdata)  // 保存元数据
+                saves_remote("/article/" + this.newarticle.aid + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
+                const sdata = tdata
+                delete sdata['keyword']
+                delete sdata['describe']
+                reads_remote("/articles.json",(article_list)=>{
+                    article_list[this.newarticle.aid.toString()] = sdata
+                    saves_remote("/articles.json",article_list)
+                },true) // 保存文章到列表
+                clearInterval(this.autosave_interval)
+                // TODO: 根据分类更细分类列表
+                alert("保存成功")
+            }
+        },
+        set_static_link($event,pub = false){
+            // 设置固定链接
+
+            // 确保以 / 开头
+            if (!this.newarticle.staticlink.startsWith("/")){
+                this.newarticle.staticlink = "/" + this.newarticle.staticlink
+            }
+            this.static_setting = true
+            // 保存元数据
+            let sdata = {
+                "atitle": this.newarticle.atitle,  // 文章标题
+                "author": this.newarticle.author,  // 作者
+                "pubtime": this.newarticle.pubtimer.getTime(),  // 发布时间
+                "aclass": this.newarticle.aclass,  // 文章分类
+                "tags": this.newarticle.tags,  // 标签
+                "spimg": this.newarticle.spimg,  // 特色图像
+                "staticlink": this.newarticle.staticlink,  // 固定链接
+                "pub": pub, // 文章已保存
+                "saveto": this.saveto,  // 保存目标格式
+                "keyword": this.newarticle.keyword,  // SEO 关键字
+                "describe": this.newarticle.describe,  // SEO 描述
+                "cc1": this.newarticle.cc1,  // 备用字段 1
+                "cc2": this.newarticle.cc2,  // 备用字段 2
+                "cc3": this.newarticle.cc3,  // 备用字段 3
+            }
+            let _this = this
+            saves_remote(this.newarticle.staticlink + ".json",sdata,"application/json",()=>{
+                _this.static_setting = false
+            })
+
+            // 修改 url
+            if (getQueryVariable("link") == null){
+                history.pushState({},"",document.URL + "&link=" + this.newarticle.staticlink)
+            }
+            return sdata
         },
         load_art(aid){
             // 读取文章
-            this.aid = aid
-            reads_remote("/article/" + this.aid + ".json",(tdata)=>{
-                this.atitle = tdata.atitle
-                this.author = tdata.author
-                this.pubtime =tdata.pubtime
-                this.tags =tdata.tags
-                this.spimg =tdata.spimg
-                    // this.statictdata
-                this.keyword =tdata.keyword
-                this.describe =tdata.describe
-                this.cc1 = tdata.cc1
-                this.cc2 = tdata.cc2
-                this.cc3 = tdata.cc3
+            this.newarticle.aid = aid
+            reads_remote("/article/" + this.newarticle.aid + ".json",(tdata)=>{
+                this.newarticle.atitle = tdata.atitle
+                this.newarticle.author = tdata.author
+                this.newarticle.pubtime =tdata.pubtime
+                this.newarticle.tags =tdata.tags
+                this.newarticle.spimg =tdata.spimg
+                // this.newarticle.statictdata
+                this.newarticle.keyword =tdata.keyword
+                this.newarticle.describe =tdata.describe
+                this.newarticle.cc1 = tdata.cc1
+                this.newarticle.cc2 = tdata.cc2
+                this.newarticle.cc3 = tdata.cc3
+
                 this.tips = "正在加载文章，请稍后"
                 // 先加载数据再读取文章
-                reads_remote("/article/" + this.aid + ".md",(md)=>{
+                reads_remote("/article/" + this.newarticle.aid + ".md",(md)=>{
                     // 写入文章
                     this.artinfo = md.data
                     MDEdit.clear()
@@ -190,11 +262,46 @@ upapp = Vue.createApp({
                     this.tips = "加载完成"
                 },false,()=>{alert("文章内容读取失败，请刷新重试")})
 
+
             },true,()=>{alert("文章数据读取失败，请检查网络连接并刷新重试")})
             $("#artinfos")[0].value = this.artinfo
+        },
+        load_static(lnk) {
+            // 读静态文章
+            this.newarticle.staticlink = lnk
+            this.staticfile = true
+            reads_remote(lnk + ".json",(tdata)=>{
+                this.newarticle.atitle = tdata.atitle
+                this.newarticle.author = tdata.author
+                this.newarticle.pubtimer = tdata.pubtimer
+                this.newarticle.aclass = tdata.aclass
+                this.newarticle.tags = tdata.tags
+                this.newarticle.spimg = tdata.spimg
+                this.newarticle.staticlink = tdata.staticlink
+                this.newarticle.saveto = tdata.saveto
+                this.newarticle.keyword = tdata.keyword
+                this.newarticle.describe = tdata.describe
+                this.newarticle.static_link_seted = true  // 固定链接已设置
+                this.newarticle.cc1 = tdata.cc1
+                this.newarticle.cc2 = tdata.cc2
+                this.newarticle.cc3 = tdata.cc3
+                if (tdata.pub){
+                    this.tips = "正在加载文章，请稍后"
+                    // 先加载数据再读取文章
+                    reads_remote(lnk + "." + this.saveto,(md)=>{
+                        // 写入文章
+                        this.artinfo = md.data
+                        MDEdit.clear()
+                        MDEdit.appendMarkdown(this.artinfo)
+                        this.tips = "加载完成"
+                    },false,()=>{alert("文章内容读取失败，请刷新重试")})
+                }
+                else{
+                    this.tips = "找到了固定链接，但文章内容未保存"
+                }
 
-
-        }
+            },true,()=>{alert("文章数据读取失败，请检查网络连接并刷新重试")})
+        },
 
     },
     mounted(){

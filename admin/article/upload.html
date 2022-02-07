@@ -45,20 +45,48 @@
             </h1>
             <br />
             <el-form label-width="100px">
-                <el-form-item label="文章 ID：">
-                    <el-input v-model="aid" disabled></el-input>
+                <el-form-item label="文章 ID：" v-show="!staticfile">
+                    <el-input v-model="newarticle.aid" disabled></el-input>
                 </el-form-item>
+                <el-form-item label="固定链接：" v-show="staticfile">
+                    <el-col :span="18">
+                        <el-input placeholder="固定链接" v-model="newarticle.staticlink"
+                                  :disabled="newarticle.static_link_seted||static_setting||static_deleting"></el-input>
+                    </el-col>
+                    <el-col :span="1">
+                        .{{saveto}}
+                    </el-col>
+                    <el-col :span="5">
+                        <el-button :type="static_btn_type" :loading="static_setting"
+                                   @click="set_static_link" v-if="!newarticle.static_link_seted">设置</el-button>
+                        <el-button :type="del_static_btn_type" :loading="static_deleting" v-if="newarticle.static_link_seted">删除</el-button>
+                    </el-col>
+                </el-form-item>
+
                 <el-form-item label="文章标题：">
-                    <el-input placeholder="输入文章标题" v-model="atitle" clearable></el-input>
+                    <el-input placeholder="输入文章标题" v-model="newarticle.atitle" clearable></el-input>
+                </el-form-item>
+
+                <el-form-item label="文章类型：">
+                    <el-radio-group v-model="staticfile">
+                        <el-radio :label="false">普通文章</el-radio>
+                        <el-radio :label="true">固定链接</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="保存格式：">
+                    <el-radio-group v-model="saveto">
+                        <el-radio :label="'md'">MarkDown</el-radio>
+                        <el-radio :label="'html'" v-if="staticfile">HTML</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="作者：">
-                    <el-input placeholder="输入作者" v-model="author" clearable></el-input>
+                    <el-input placeholder="输入作者" v-model="newarticle.author" clearable></el-input>
                 </el-form-item>
-                <el-form-item label="发布日期：">
-                    <el-date-picker placeholder="发布日期" type="date" v-model="pubtime" clearable></el-date-picker>
+                <el-form-item label="时间：">
+                    <el-date-picker placeholder="发布日期" type="date" v-model="newarticle.pubtime" clearable></el-date-picker>
                 </el-form-item>
                 <el-form-item label="分类：">
-                    <el-input placeholder="输入分类，用英文逗号隔开" v-model="aclass" clearable></el-input>
+                    <el-input placeholder="输入分类，用英文逗号隔开" v-model="newarticle.aclass" clearable></el-input>
                 </el-form-item>
 
                 <div style="padding-left: 20px">
@@ -74,32 +102,21 @@
                     </div>
                 </div>
 
-
-                <!--                <el-form-item label="固定链接：">-->
-                <!--                    <el-col :span="18">-->
-                <!--                        <el-input placeholder="固定链接" v-model="staticlink"></el-input>-->
-                <!--                    </el-col>-->
-                <!--                    <el-col :span="6">-->
-                <!--                        <el-button :type="static_btn_type" :loading="static_setting">设置</el-button>-->
-                <!--                        <el-button :type="del_static_btn_type" :loading="static_deleting">删除</el-button>-->
-                <!--                    </el-col>-->
-                <!--                </el-form-item>-->
-
                 <el-form-item label="特色图像：">
                     <el-col :span="17">
-                        <el-input placeholder="特色图像 URL" v-model="spimg" clearable></el-input>
+                        <el-input placeholder="特色图像 URL" v-model="newarticle.spimg" clearable></el-input>
                     </el-col>
                     <el-col :span="2">上传：</el-col>
                     <el-col :span="4">
-                        <el-input type="file"></el-input>
+
                     </el-col>
 
                 </el-form-item>
                 <el-form-item label="SEO关键字：">
-                    <el-input placeholder="关键字，用英文逗号隔开" v-model="keyword"></el-input>
+                    <el-input placeholder="关键字，用英文逗号隔开" v-model="newarticle.keyword"></el-input>
                 </el-form-item>
                 <el-form-item label="SEO描述：">
-                    <el-input placeholder="描述内容" v-model="describe"></el-input>
+                    <el-input placeholder="描述内容" v-model="newarticle.describe"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button @click="save_article">提交</el-button>
@@ -164,18 +181,32 @@
                 }
             }
             this.addKeyMap(keyMap)
-
-            // 判断编辑文章还是新建文章
-            const aid = getQueryVariable("aid")
-            if (aid === null){
-                // 新文章
-                // 检查草稿
-                v_app.new_article = true
-                v_app.load_cg(init=true)
+            const st = getQueryVariable("type")
+            if (st === "static"){
+                const stlink = getQueryVariable("link")
+                if (stlink == null){
+                    // 新静态文章
+                    v_app.new_article = true
+                    v_app.staticfile = true
+                }
+                else{
+                    v_app.load_static(stlink)
+                }
             }
             else{
-                // 读取文章
-                v_app.load_art(aid)
+                // 普通文章
+                // 判断编辑文章还是新建文章
+                const aid = getQueryVariable("aid")
+                if (aid === null){
+                    // 新文章
+                    // 检查草稿
+                    v_app.new_article = true
+                    v_app.load_cg(init=true)
+                }
+                else{
+                    // 读取文章
+                    v_app.load_art(aid)
+                }
             }
 
             // 设置自动保存 5 分钟自动保存一次

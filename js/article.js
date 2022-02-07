@@ -5,7 +5,8 @@
 const aapp = Vue.createApp({
     data(){
         return {
-            "article_id":1,
+            "article_id":null,
+            "article_link":null,
             "scrtimer":null,
             "scrollnum":0,
         }
@@ -17,27 +18,38 @@ const aapp = Vue.createApp({
             },
             set(v){
                 this.article_id = v
-                axios.get(COS_URL + "/article/" + this.aid + ".md").then((r)=>{
-                    MDView = editormd.markdownToHTML("mdview", {
-                        markdown: r.data,
-                        // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
-                        htmlDecode: "style,script,iframe",  // you can filter tags decode
-                        // toc             : true,
-                        tocContainer    : "#article_aside", // 自定义 ToC 容器层
-                        tocm: true,    // Using [TOCM]
-                        emoji: true,
-                        taskList: true,
-                        tex: true,  // 默认不解析
-                        flowChart: true,  // 默认不解析
-                        sequenceDiagram: true,  // 默认不解析
-                    });
-                }).catch((e)=>{alert("加载失败，请重试");console.log(e)})
+                this.show_art(COS_URL + "/article/" + this.aid + ".md")
+            }
+        },
+        "alink":{
+            get(){return this.article_link},
+            set(v){
+                this.article_link = v
+                this.show_art(v)
             }
         },
         "artheight"(){return document.body.scrollHeight - 210}
 
     },
     methods:{
+        show_art(u){
+            // 从 u 获取MarkDown 并显示
+            axios.get(u).then((r)=>{
+                MDView = editormd.markdownToHTML("mdview", {
+                    markdown: r.data,
+                    // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+                    htmlDecode: "style,script,iframe",  // you can filter tags decode
+                    // toc             : true,
+                    tocContainer    : "#article_aside", // 自定义 ToC 容器层
+                    tocm: true,    // Using [TOCM]
+                    emoji: true,
+                    taskList: true,
+                    tex: true,  // 默认不解析
+                    flowChart: true,  // 默认不解析
+                    sequenceDiagram: true,  // 默认不解析
+                });
+            }).catch((e)=>{alert("加载失败，请重试");console.log(e)})
+        },
         load_aid(){
             // 从请求页面读取文章 ID
             let aid = getQueryVariable("id")
@@ -48,6 +60,10 @@ const aapp = Vue.createApp({
                 }
             }
             this.aid = aid
+        },
+        load_static(lnk){
+            // 加载固定链接
+            this.alink = lnk
         },
         scroll_to_top(){
             // 滚动到指定行数
