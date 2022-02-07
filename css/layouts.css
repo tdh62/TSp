@@ -16,6 +16,10 @@ html,body,#main-body,.el-container,.login-window {
     padding: 10%;
 }
 
+.login-card{
+    width: 700px;
+}
+
 .upload-save-tips-div{
     margin-top: 5px;
     margin-bottom: 5px;
