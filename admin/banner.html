@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>图床记录</title>
+    <title>首页图设置</title>
     <script src="/global/settings.js"></script>
 
     <script type='text/javascript' src='../global/js/md5.js'></script>
@@ -45,19 +45,28 @@
     <el-container v-loading="loading">
         <el-row align="middle">
             <el-card header="图床数据记录" style="width: 700px">
-                <el-form label-width="150px" class="login-window">
-                    <el-form-item label="原始图片路径：">
-                        <el-input v-model="rawurl"></el-input>
+                <el-form label-width="50px" class="login-window">
+                    TODO: 动态加载
+                    <el-form-item label="1">
+                        <el-input v-model="banner1"></el-input>
                     </el-form-item>
-                    <el-form-item label="图床路径">
-                        <el-input v-model="bedurl"></el-input>
+                    <el-form-item label="2">
+                        <el-input v-model="banner2"></el-input>
                     </el-form-item>
-                    <el-form-item label="图床2路径">
-                        <el-input v-model="bedurl2"></el-input>
+                    <el-form-item label="3">
+                        <el-input v-model="banner3"></el-input>
+                    </el-form-item>
+                    <el-form-item label="4">
+                        <el-input v-model="banner4"></el-input>
+                    </el-form-item>
+                    <el-form-item label="5">
+                        <el-input v-model="banner5"></el-input>
+                    </el-form-item>
+                    <el-form-item label="6">
+                        <el-input v-model="banner6"></el-input>
                     </el-form-item>
                     <p v-if="!logined">请登录</p>
                     <el-button type="primary" @click="doadd" :disabled="!logined">保存</el-button>
-                    <p style="font-size: 1em" v-text="tips"></p>
                 </el-form>
             </el-card>
         </el-row>
@@ -67,7 +76,7 @@
 <script type="application/javascript">
     lapp = Vue.createApp({
         data(){
-            return {"rawurl":"","bedurl":"","bedurl2":"","tips":"----","loading":false}
+            return {"banner1":"","banner2":"","banner3":"","banner4":"","banner5":"","banner6":"","loading":false}
         },
         computed:{
             logined(){
@@ -82,30 +91,18 @@
                 let _this = this
                 this.loading = true
                 // 添加记录
-                reads_remote("/imgbed/imagebed.json",(r)=>{
-                    let imglist = r.datas;
-                    let cnt = r.datas.push([_this.rawurl, _this.bedurl,_this.bedurl2])
-                    if (cnt >= 100){
-                        saves_remote("/imgbed/imagebed.json", {"pages":parseInt(r.pages)+1,"datas":[]})
-                        saves_remote("/imgbed/imagebed" + r.pages + ".json",r,"application/json",()=>{
-                            _this.loading = false
-                            _this.tips = "成功！"
-                            setTimeout(()=>{_this.tips="----"},1000)
-                            _this.rawurl = ""
-                            _this.bedurl = ""
-                            _this.bedurl2 = ""
-                        })
-                    }else{
-                        saves_remote("/imgbed/imagebed.json",r,"application/json",()=>{
-                            _this.loading = false
-                            _this.tips = "成功！"
-                            setTimeout(()=>{_this.tips="----"},1000)
-                            _this.rawurl = ""
-                            _this.bedurl = ""
-                            _this.bedurl2 = ""
-                        })
-                    }
-                },true,(e)=>{_this.tips = e;_this.loading = false})
+                let r = []
+                if (this.banner1 !== "")r.push(this.banner1)
+                if (this.banner2 !== "")r.push(this.banner2)
+                if (this.banner3 !== "")r.push(this.banner3)
+                if (this.banner4 !== "")r.push(this.banner4)
+                if (this.banner5 !== "")r.push(this.banner5)
+                if (this.banner6 !== "")r.push(this.banner6)
+                saves_remote("/settings/banner.txt",r,"application/json",()=>{
+                    _this.loading = false
+                    alert("成功")
+                })
+
             }
 
         }

@@ -45,12 +45,8 @@
 <body>
 <div id="article_main">
     <el-container v-loading="loading">
-
-        <site-header></site-header>
-
+        <site-header :now_page="'2'"></site-header>
         <el-container>
-
-
             <el-aside width="250px"  id="article_aside_outer">
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
                     <div ref="innerRef">
@@ -79,9 +75,6 @@
     let MDView = null
     v_app = aapp.mount("#article_main")
     v_app.load_aid()
-
-
-
 
 </script>
 </body>

@@ -34,7 +34,7 @@ el-container{
 .site-header-map{
     height: 40px;
     text-align: left;
-    margin-left: 30px;
+    /*margin-left: 30px;*/
 }
 .el-menu{
     --el-menu-hover-bg-color:#fff!important;
@@ -47,6 +47,19 @@ el-menu-item{
     height: 40px;
 }
 /*---------------------------------------------------------------------------*/
+
+.index-banner{
+    height: 200px;
+}
+#index-main{
+    display: inherit;
+    width: 100%;
+    min-height: 400px;
+    background: #ddffff;
+}
+.el-carousel__container{
+    height: 200px;
+}
 
 .login-form{
     padding: 10%;

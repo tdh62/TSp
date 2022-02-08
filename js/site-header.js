@@ -1,4 +1,5 @@
-const shd = aapp.component("site-header",{
+const hds = {
+    props:{now_page:String},
     data(){
         return {
             "load_remote":true,
@@ -9,7 +10,7 @@ const shd = aapp.component("site-header",{
         }
     },
     template:"        <el-header height=\"100px\" tag=\"div\" id=\"site-header\">\n" +
-        "            <el-container>\n" +
+        "            <el-container class='header-row'>\n" +
         "                <el-row align=\"middle\" class=\"header-row\">\n" +
         "                    <el-col :span=\"1\">\n" +
         "                    </el-col>\n" +
@@ -19,8 +20,8 @@ const shd = aapp.component("site-header",{
         "                    </el-col>\n" +
         "                    <el-col :span=\"3\">\n" +
         "                    </el-col>\n" +
-        "                    <el-col class=\"site-header-map\" :span=\"20\">\n" +
-        "                        <el-menu default-active=\"2\" class=\"el-menu-demo\" mode=\"horizontal\">\n" +
+        "                    <el-col class=\"site-header-map\" :span=\"24\">\n" +
+        "                        <el-menu :default-active=\"now_page\" class=\"el-menu-demo\" mode=\"horizontal\">\n" +
         "                            <el-menu-item index=\"1\">首页</el-menu-item>\n" +
         "                            <el-menu-item index=\"2\">文章</el-menu-item>\n" +
         "                            <el-menu-item index=\"3\">关于</el-menu-item>\n" +
@@ -38,4 +39,11 @@ const shd = aapp.component("site-header",{
         }
     }
 
-})
+}
+let shd = null
+if (typeof aapp != "undefined"){
+    shd = aapp.component("site-header",hds)
+    shd.now_page = "1"
+}else{
+    shd = mainapp.component("site-header",hds)
+}
