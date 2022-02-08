@@ -53,6 +53,9 @@
                     <el-form-item label="图床路径">
                         <el-input v-model="bedurl"></el-input>
                     </el-form-item>
+                    <el-form-item label="图床2路径">
+                        <el-input v-model="bedurl2"></el-input>
+                    </el-form-item>
                     <p v-if="!logined">请登录</p>
                     <el-button type="primary" @click="doadd" :disabled="!logined">保存</el-button>
                     <p style="font-size: 1em" v-text="tips"></p>
@@ -65,7 +68,7 @@
 <script type="application/javascript">
     lapp = Vue.createApp({
         data(){
-            return {"rawurl":"","bedurl":"","tips":"----","loading":false}
+            return {"rawurl":"","bedurl":"","bedurl2":"","tips":"----","loading":false}
         },
         computed:{
             logined(){
@@ -82,7 +85,7 @@
                 // 添加记录
                 reads_remote("/imgbed/imagebed.json",(r)=>{
                     let imglist = r.datas;
-                    let cnt = r.datas.push([_this.rawurl, _this.bedurl])
+                    let cnt = r.datas.push([_this.rawurl, _this.bedurl,_this.bedurl2])
                     if (cnt >= 2){
                         saves_remote("/imgbed/imagebed.json", {"pages":parseInt(r.pages)+1,"datas":[]})
                         saves_remote("/imgbed/imagebed" + r.pages + ".json",r,"application/json",()=>{

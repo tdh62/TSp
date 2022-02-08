@@ -85,9 +85,13 @@
                                 saves_remote("/class/class0.json",{},"application/json",()=>{
                                     // 固定链接页面
                                     saves_remote("/static-link.json",{},"application/json",()=>{
-                                        // ...
-                                        alert("初始化完成！")
-                                        _this.loading = false
+                                        // 站点信息
+                                        saves_remote("/siteinfo.json",{"site_title":"青橙屋","site_sub_title":"见到你很高兴",}
+                                            ,"application/json",()=>{
+                                                // ...
+                                                alert("初始化完成！")
+                                                _this.loading = false
+                                            })
                                     })
                                 })
                             })

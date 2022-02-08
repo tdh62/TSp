@@ -5,11 +5,6 @@
 const aapp = Vue.createApp({
     data(){
         return {
-            "site_info":{
-              "site_title":"青橙屋",
-              "site_sub_title":"见到你很高兴",
-            },
-
             "article_id":null,
             "article_link":null,
             "scrtimer":null,
@@ -38,7 +33,7 @@ const aapp = Vue.createApp({
                 this.show_art(v)
             }
         },
-        "artheight"(){return document.body.scrollHeight - 210}
+        "artheight"(){return document.body.scrollHeight - 180}
 
     },
     methods:{
