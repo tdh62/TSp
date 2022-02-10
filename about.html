@@ -35,7 +35,7 @@
   <script src="component/storage/COS.js"></script>
   <script src="component/storage/remote.js"></script>
   <script src="js/headerAndFooter.js"></script>
-  <script src="js/indexmain.js"></script>
+  <script src="js/aboutmain.js"></script>
   <script src="js/site-header.js"></script>
 
 </head>
@@ -43,16 +43,11 @@
 <div id="main-body">
   <el-container v-loading="loading">
     <site-header :now_page="'1'"></site-header>
-
-    <el-carousel class="index-banner" arrow="never" indicator-position="none" :autoplay='false'>
-      <el-carousel-item>
-        <el-image :src="index_image" fit="cover" style="max-width: 90%" height="200"></el-image>
-      </el-carousel-item>
-    </el-carousel>
-    <div id="index-main" :style="{'font-size': font_size_fix}">
+    <div ref="innerRef" >
+      <div id="index-main" :style="{'font-size': font_size_fix}">
         <textarea style="display: none">页面正在加载中，请稍候...（若长时间未响应请检查网络连接）</textarea>
+      </div>
     </div>
-
     <el-footer class="t-footer" height="50px" id="site-footer">
       页脚
     </el-footer>

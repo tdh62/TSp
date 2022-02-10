@@ -17,23 +17,23 @@ mainapp = Vue.createApp({
     mounted(){
         // 从 u 获取MarkDown 并显示
         reads_remote("/about.md",(r)=>{
-            MDView = editormd.markdownToHTML("index-main", {
-                    markdown: r,
-                    // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
-                    htmlDecode: "style,script,iframe",  // you can filter tags decode
-                    // toc             : true,
-                    // tocContainer    : "#article_aside", // 自定义 ToC 容器层
-                    // tocm: true,    // Using [TOCM]
-                    emoji: true,
-                    taskList: true,
-                    tex: true,  // 默认不解析
-                    flowChart: true,  // 默认不解析
-                    sequenceDiagram: true,  // 默认不解析
-                }
-            )
-            MDView.appendMarkdown("\n\n")
-            reads_remote("/README.md",(r)=>{
-                MDView.appendMarkdown(r)
+
+            reads_remote("/README.md",(s)=>{
+                console.log(r + "\n\n" + s)
+                MDView = editormd.markdownToHTML("index-main", {
+                        markdown: r + "\n\n" + s,
+                        // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+                        htmlDecode: "style,script,iframe",  // you can filter tags decode
+                        // toc             : true,
+                        // tocContainer    : "#article_aside", // 自定义 ToC 容器层
+                        // tocm: true,    // Using [TOCM]
+                        emoji: true,
+                        taskList: true,
+                        tex: true,  // 默认不解析
+                        flowChart: true,  // 默认不解析
+                        sequenceDiagram: true,  // 默认不解析
+                    }
+                )
             },false,(e)=>{console.log(e);})
         },false,(e)=>{console.log(e);alert("加载失败，请刷新重试")})
 
