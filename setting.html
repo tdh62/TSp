@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>初始化</title>
+
+    <link rel="stylesheet" href="/global/css/element-plus.css">
+    <link rel="stylesheet" href="/css/words.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+
+    <script src="/component/storage/local.js"></script>
+
+    <style>
+        div{text-align: center;margin: auto}
+        body{background: #e0e0e0}
+    </style>
+
+</head>
+<body>
+<div id="login-main" class="login-window">
+    <el-container v-loading="loading">
+        <el-row align="middle">
+            <el-card header="站点设置" style="width: 700px">
+                <el-form label-width="150px" class="login-window">
+                    <el-form-item label="文章字体调节">
+                        <el-slider v-model="font_size_fix" :step="0.1" :min="0.5" :max="2" > </el-slider>
+                    </el-form-item>
+                    <br />
+                    <br />
+                    <el-button type="primary" @click="doset">保存并返回</el-button>
+                </el-form>
+            </el-card>
+        </el-row>
+    </el-container>
+</div>
+
+<script type="application/javascript">
+    lapp = Vue.createApp({
+        data(){
+            return {"loading":false,"font_size_fix":1}
+        },
+        computed:{
+            logined(){
+                return remoteStorage.get_login_status()
+            },
+        },
+        mounted(){
+            const ft = read_from_local("font_size_fix")
+            this.font_size_fix = ft?parseFloat(ft.replace("em","")):1
+        },
+        methods:{
+            doset(){
+                let _this = this
+                // 依次初始化
+                // 下一篇文章 ID
+                save_to_local("font_size_fix",this.font_size_fix + "em")
+                window.location.href = "/index.html"
+            }
+        }
+    })
+    lapp.use(ElementPlus)
+    v_app = lapp.mount("#login-main")
+</script>
+</body>
+</html>
