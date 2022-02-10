@@ -90,6 +90,17 @@ el-menu-item{
     padding: 20px 0;
 }
 
+.article_list_button_group{
+    text-align: left;
+}
+
+.article_list_date{
+    padding-left: 20px;
+    color: grey;
+}
+.article_list_tag{
+    margin-right: 5px;
+}
 /*
 档窗口宽度小于 992 px 时隐藏左侧栏
  */

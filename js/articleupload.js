@@ -303,7 +303,6 @@ upapp = Vue.createApp({
 
                 delete tdata['keyword']
                 delete tdata['describe']
-                delete tdata['tags']
                 delete tdata['cc2']
                 delete tdata['cc3']
 

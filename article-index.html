@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+  <meta charset="UTF-8">
+  <title>文章列表</title>
+  <script src="global/settings.js"></script>
+
+  <script type='text/javascript' src='global/js/md5.js'></script>
+  <script type='text/javascript' src='global/js/hmac-sha1.js'></script>
+  <script type='text/javascript' src='js/common.js'></script>
+
+  <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="component/editor/css/editormd.css">
+  <link rel="stylesheet" href="component/editor/css/style.css">
+  <link rel="stylesheet" href="global/css/element-plus.css">
+  <link rel="stylesheet" href="css/words.css">
+  <link rel="stylesheet" href="css/layouts.css">
+
+  <script type="application/javascript" src="global/js/axios.js"></script>
+
+  <script type="application/javascript" src="global/js/vue.global.js"></script>
+  <script type="application/javascript" src="global/js/element-plus.full.js"></script>
+
+  <script src="component/storage/local.js"></script>
+  <script src="component/storage/COS.js"></script>
+  <script src="component/storage/remote.js"></script>
+  <script src="js/headerAndFooter.js"></script>
+  <script src="js/articlelistmain.js"></script>
+  <script src="js/site-header.js"></script>
+
+</head>
+<body>
+<div id="main-body">
+  <el-container v-loading="loading">
+    <site-header :now_page="'2'"></site-header>
+
+    <!--  TODO: 分类选择器  -->
+
+    <div ref="innerRef" >
+      <div id="index-main" :style="{'font-size': font_size_fix}">
+
+
+            <el-collapse accordion>
+              <el-collapse-item :name="art.aid" v-for="art in recent_article">
+                <template #title>
+                  {{art.atitle}}
+                  <div class="article_list_date">{{getd(art.pubtime)}}</div>
+                </template>
+                <div>
+                  <el-descriptions class="margin-top" :title="art.atitle" :column="3" size="small" border>
+                    <template #extra>
+                      <el-button type="primary" @click.stop="show_art(art.aid)" round>查看文章</el-button>
+                    </template>
+                    <el-descriptions-item label="作者">
+                      {{art.author}}
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="标签">
+                      <el-tag size="small" v-for="tag in art.tags.split(',')" class="article_list_tag" v-text="tag"></el-tag>
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="分类">
+                      {{aclass_dict[art.aclass]}}
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="描述">
+                      {{art.describe?art.describe:"无描述"}}
+                    </el-descriptions-item>
+
+                  </el-descriptions>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+
+
+
+      </div>
+      <!--
+        <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+          <li v-for="i in count" :key="i" class="infinite-list-item">{{ i }}</li>
+        </ul>
+        -->
+    </div>
+    <el-footer class="t-footer" height="50px" id="site-footer">
+      页脚
+    </el-footer>
+  </el-container>
+</div>
+
+<script type="application/javascript">
+  v_app = mainapp.mount("#main-body")
+
+
+</script>
+</body>
+</html>

@@ -48,6 +48,7 @@
         <site-header :now_page="'2'"></site-header>
         <el-container>
             <el-aside width="250px"  id="article_aside_outer" v-if="hide_menu">
+<!--                TODO:用 Descriptions 描述列表展示基本信息-->
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
                     <div ref="innerRef">
                         <div id="article_aside" :style="{'font-size': font_size_fix}" class="markdown-body editormd-preview-container"> </div>

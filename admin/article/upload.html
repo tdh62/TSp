@@ -72,6 +72,9 @@
                 <el-form-item label="作者：">
                     <el-input placeholder="输入作者" v-model="newarticle.author" clearable></el-input>
                 </el-form-item>
+                <el-form-item label="标签：">
+                    <el-input placeholder="输入标签，英文逗号分隔" v-model="newarticle.tags" clearable></el-input>
+                </el-form-item>
 
                 <el-form-item label="文章类型：">
                     <el-radio-group v-model="staticfile">
