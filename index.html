@@ -44,17 +44,14 @@
   <el-container v-loading="loading">
     <site-header :now_page="'1'"></site-header>
 
-      <el-carousel class="index-banner" arrow="never" indicator-position="none" :autoplay='false'>
-        <el-carousel-item>
-          <el-image :src="index_image" fit="contain" style="width: 97%"></el-image>
-        </el-carousel-item>
-      </el-carousel>
-
-
-
-      <div id="index-main">
-
-      </div>
+    <el-carousel class="index-banner" arrow="never" indicator-position="none" :autoplay='false'>
+      <el-carousel-item>
+        <el-image :src="index_image" fit="cover" style="max-width: 90%" height="200"></el-image>
+      </el-carousel-item>
+    </el-carousel>
+    <div id="index-main" :style="{'font-size': font_size_fix}">
+        <textarea style="display: none">页面正在加载中，请稍候...（若长时间未响应请检查网络连接）</textarea>
+    </div>
 
     <el-footer class="t-footer" height="50px" id="site-footer">
       页脚
@@ -64,6 +61,7 @@
 
 <script type="application/javascript">
   vapp = mainapp.mount("#main-body")
+
 
 </script>
 </body>

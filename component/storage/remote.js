@@ -83,7 +83,7 @@ function reads_remote(path,callback,toobj = false,errCallback = (r)=>{console.wa
         if (toobj){
             callback(str_to_json(r.data))
         }else{
-            callback(r)
+            callback(r.data)
         }
     }).catch(errCallback)
 }

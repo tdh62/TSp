@@ -33,7 +33,15 @@ const aapp = Vue.createApp({
                 this.show_art(v)
             }
         },
-        "artheight"(){return document.body.scrollHeight - 180}
+        "artheight"(){return document.body.scrollHeight - 180},
+        "font_size_fix"(){
+            const ft = read_from_local("font_size_fix")
+            return ft?ft:"1em"
+        },
+        "hide_menu"(){
+            return parseFloat(this.font_size_fix.replace("em","")) <= 1.3
+        },
+
 
     },
     methods:{

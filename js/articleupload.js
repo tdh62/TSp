@@ -294,7 +294,7 @@ upapp = Vue.createApp({
                 // 先加载数据再读取文章
                 reads_remote("/article/" + this.newarticle.aid + ".md",(md)=>{
                     // 写入文章
-                    this.artinfo = md.data
+                    this.artinfo = md
                     MDEdit.clear()
                     MDEdit.appendMarkdown(this.artinfo)
                     this.tips = "加载完成"
@@ -327,7 +327,7 @@ upapp = Vue.createApp({
                     // 先加载数据再读取文章
                     reads_remote(lnk + "." + this.saveto,(md)=>{
                         // 写入文章
-                        this.artinfo = md.data
+                        this.artinfo = md
                         MDEdit.clear()
                         MDEdit.appendMarkdown(this.artinfo)
                         this.tips = "加载完成"

@@ -16,7 +16,9 @@ el-container{
 .header-row{
     width: 100%;
 }
-
+#site-header{
+    margin: 0 calc(5% + 60px);
+}
 .site-titles{
     text-align: left;
     height: 50px;
@@ -46,6 +48,9 @@ el-menu-item{
 #site-footer{
     height: 40px;
 }
+.t-footer{
+    padding-top: 8px;
+}
 /*---------------------------------------------------------------------------*/
 
 .index-banner{
@@ -56,11 +61,18 @@ el-menu-item{
     width: 100%;
     min-height: 400px;
     background: #ddffff;
+
+    max-width: 90%;
+    margin: 0 5%;
+    padding: 20px 40px 0;
 }
 .el-carousel__container{
     height: 200px;
 }
-
+.article_main{
+    max-width: 90%;
+    margin: auto;
+}
 .login-form{
     padding: 10%;
 }
@@ -72,6 +84,10 @@ el-menu-item{
 .upload-save-tips-div{
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.markdown-body{
+    padding: 20px 0;
 }
 
 /*
