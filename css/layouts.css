@@ -3,7 +3,7 @@
 CopyRight @tdh
 */
 
-html,body,#main-body,.el-container,.login-window,#article_main {
+html,body,#main-body,.el-container,.login-window,#article_main,#article_list_main,#index_main {
     /*页面占满整个布局*/
     padding: 0;
     margin: 0;

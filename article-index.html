@@ -36,10 +36,8 @@
 
     <!--  TODO: 分类选择器  -->
 
-    <div ref="innerRef" >
+    <div ref="innerRef" id="article_list_main" >
       <div id="index-main" :style="{'font-size': font_size_fix}">
-
-
             <el-collapse accordion>
               <el-collapse-item :name="art.aid" v-for="art in recent_article">
                 <template #title>
