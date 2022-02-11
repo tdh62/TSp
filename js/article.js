@@ -7,9 +7,12 @@ const aapp = Vue.createApp({
         return {
             "article_id":null,
             "article_link":null,
+            "article_info":{},
             "scrtimer":null,
             "scrollnum":0,
             "loading":true,
+            "wait_password":false,
+            "artpassword":"",
             "aclass_list":[{
                 cid: '0',
                 cname: '默认分类',
@@ -23,7 +26,7 @@ const aapp = Vue.createApp({
             },
             set(v){
                 this.article_id = v
-                this.show_art(COS_URL + "/article/" + this.aid + ".md")
+                this.load_art(this.article_id)
             }
         },
         "alink":{
@@ -45,6 +48,42 @@ const aapp = Vue.createApp({
 
     },
     methods:{
+        load_art(aid){
+            // 获取文章信息并加载
+            reads_remote("/article/" + aid + ".json",(r)=>{
+                this.artinfo = r
+                if (r.password_protected){
+                    // 密码保护
+                    this.wait_password = true
+                    this.loading = false
+                }
+                else{
+                    this.show_art(COS_URL + "/article/" + aid + ".md")
+                }
+            },true,(e)=>{alert("文章加载失败，请刷新重试");console.error(e)})
+        },
+        load_art_with_password(){
+            // 读取加密文章
+            this.loading = true
+            this.wait_password = false
+            let _this = this
+            reads_remote("/article/" + this.aid + ".md",(r)=>{
+                MDView = editormd.markdownToHTML("mdview", {
+                    markdown: AES_decrypt(r,_this.artpassword),
+                    // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+                    htmlDecode: "style,script,iframe",  // you can filter tags decode
+                    // toc             : true,
+                    tocContainer    : "#article_aside", // 自定义 ToC 容器层
+                    tocm: true,    // Using [TOCM]
+                    emoji: true,
+                    taskList: true,
+                    tex: true,  // 默认不解析
+                    flowChart: true,  // 默认不解析
+                    sequenceDiagram: true,  // 默认不解析
+                })
+                _this.loading = false
+            },false,(e)=>{console.error(e);alert("读取失败")})
+        },
         show_art(u){
             // 从 u 获取MarkDown 并显示
             let _this = this

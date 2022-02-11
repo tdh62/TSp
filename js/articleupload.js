@@ -32,7 +32,7 @@ upapp = Vue.createApp({
 
                 "staticlink":"",  // 固定链接
                 "static_link_seted":false,  // 固定链接已设置
-
+                "password_protected":false, // 密码保护
                 "keyword":"",  // SEO 关键字
                 "describe":"",  // SEO 描述
                 "cc1":"",  // 备用字段 1
@@ -42,7 +42,7 @@ upapp = Vue.createApp({
                 "classpages":0,  // 文章分页
             },
             "artinfo":"", // 文章内容
-
+            "artpassword":"", // 文章密码
             "autosave_interval":null, // 自动保存调度
             "static_btn_type":"primary",  // 固定链接按钮类型
             "static_setting":false,  // 正在设置固定链接
@@ -156,150 +156,179 @@ upapp = Vue.createApp({
             // 保存文章
             this.loading = true
             this.save_cg()
-            if (this.staticfile){
+            let sdata;
+            if (this.staticfile) {
                 // 固定链接文章
 
                 // 确保以 / 开头
-                if (!this.newarticle.staticlink.startsWith("/")){
+                if (!this.newarticle.staticlink.startsWith("/")) {
                     this.newarticle.staticlink = "/" + this.newarticle.staticlink
                 }
-                if (this.saveto === "md"){
+
+                if (this.saveto === "md") {
                     // 保存 MarkDown 和 对应 HTML
-                    saves_remote(this.newarticle.staticlink + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
+                    saves_remote(this.newarticle.staticlink + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
 
                     // 生成 HTML 内容
-                    axios.get("/article.html").then((r)=>{
+                    axios.get("/article.html").then((r) => {
                         let r_datas = r.data.replace("v_app.load_aid()", "v_app.load_static('" + this.newarticle.staticlink + ".md')")
-                        saves_remote(this.newarticle.staticlink + ".html",r_datas,"text/html",
-                            (res)=>{console.log(res)})
-                    }).catch((e)=>{console.error(e)})
-                }
-                else{
+                        saves_remote(this.newarticle.staticlink + ".html", r_datas, "text/html",
+                            (res) => {
+                                console.log(res)
+                            })
+                    }).catch((e) => {
+                        console.error(e)
+                    })
+                } else {
                     // 直接保存 HTML
-                    saves_remote(this.newarticle.staticlink + ".html", MDEdit.getHTML(),"text/html",
-                        (res)=>{console.log(res)})
+                    saves_remote(this.newarticle.staticlink + ".html", MDEdit.getHTML(), "text/html",
+                        (res) => {
+                            console.log(res)
+                        })
                 }
 
                 // 更新元数据
-                sdata = this.set_static_link(null,true)
+                sdata = this.set_static_link(null, true)
 
                 let _this = this
                 // 添加到列表
-                reads_remote("/static-link.json",(r)=>{
+                reads_remote("/static-link.json", (r) => {
                         let slist = r
                         slist[_this.newarticle.staticlink.toString()] = sdata
-                        saves_remote("/static-link.json",slist,"application/json",(r)=>{
+                        saves_remote("/static-link.json", slist, "application/json", (r) => {
                             console.log(r)
                             alert("保存成功")
                         })
                     },
-                    true,(e)=>console.error(e))
-            }
-            else{
+                    true, (e) => console.error(e))
+            } else {
                 // 普通文章
                 const tdata = {
-                    "aid":this.newarticle.aid,  // 文章 ID
-                    "atitle":this.newarticle.atitle,  // 文章标题
-                    "author":this.newarticle.author,  // 作者
-                    "pubtime":this.newarticle.pubtimer.getTime(),  // 发布时间
-                    "aclass":this.newarticle.aclass,  // 文章分类
-                    "tags":this.newarticle.tags,  // 标签
-                    "spimg":this.newarticle.spimg,  // 特色图像
+                    "aid": this.newarticle.aid,  // 文章 ID
+                    "atitle": this.newarticle.atitle,  // 文章标题
+                    "author": this.newarticle.author,  // 作者
+                    "pubtime": this.newarticle.pubtimer.getTime(),  // 发布时间
+                    "aclass": this.newarticle.aclass,  // 文章分类
+                    "tags": this.newarticle.tags,  // 标签
+                    "spimg": this.newarticle.spimg,  // 特色图像
                     // "staticlink":"",  // 固定链接
-                    "keyword":this.newarticle.keyword,  // SEO 关键字
-                    "describe":this.newarticle.describe,  // SEO 描述
-                    "cc1":this.newarticle.cc1,  // 备用字段 1
-                    "cc2":this.newarticle.cc2,  // 备用字段 2
-                    "cc3":this.newarticle.cc3,  // 备用字段 3
+                    "keyword": this.newarticle.keyword,  // SEO 关键字
+                    "describe": this.newarticle.describe,  // SEO 描述
+                    "password_protected": this.newarticle.password_protected, // 密码保护
+                    "cc1": this.newarticle.cc1,  // 备用字段 1
+                    "cc2": this.newarticle.cc2,  // 备用字段 2
+                    "cc3": this.newarticle.cc3,  // 备用字段 3
                 }
-                if (this.new_article){
+                if (this.new_article) {
                     // 新文章
                     tdata['apages'] = this.site_info.article_now_page
                     tdata['classpages'] = this.site_info.class_now_page[this.newarticle.aclass]
-                }
-                else{
+                } else {
                     tdata['apages'] = this.newarticle.apages
                     tdata['classpages'] = this.newarticle.classpages
                 }
-                saves_remote("/article/" + this.newarticle.aid + ".json",tdata)  // 保存元数据
-                saves_remote("/article/" + this.newarticle.aid + ".md",this.artinfo,"text/x-markdown")  // 保存文章内容
+                saves_remote("/article/" + this.newarticle.aid + ".json", tdata)  // 保存元数据
+
+                if (this.newarticle.password_protected){
+                    // 加密
+                    this.artinfo = AES_encrypt(this.artinfo,this.artpassword)
+                }
+                saves_remote("/article/" + this.newarticle.aid + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
 
                 // 最近发布
-                reads_remote("/recent-articles.json",(r)=>{
+                reads_remote("/recent-articles.json", (r) => {
                     let cnt = r.push(tdata)
-                    if (cnt > Resent_Article_Number){
+                    if (cnt > Resent_Article_Number) {
                         delete r[0]
                     }
-                    saves_remote("/recent-articles.json",r,"application/json")
-                },true,(e)=>{alert("保存最新文章失败");console.log(e)})
+                    saves_remote("/recent-articles.json", r, "application/json")
+                }, true, (e) => {
+                    alert("保存最新文章失败");
+                    console.log(e)
+                })
 
                 // 分类最近
-                reads_remote("/recent-class-" + this.newarticle.aclass + ".json",(r)=>{
+                reads_remote("/recent-class-" + this.newarticle.aclass + ".json", (r) => {
                     let cnt = r.push(tdata)
-                    if (cnt > Resent_Article_Number){
+                    if (cnt > Resent_Article_Number) {
                         delete r[0]
                     }
-                    saves_remote("/recent-articles.json",r,"application/json")
-                },true,(e)=>{alert("保存最新分类文章失败");console.log(e)})
+                    saves_remote("/recent-class-" + this.newarticle.aclass + ".json", r, "application/json")
+                }, true, (e) => {
+                    alert("保存最新分类文章失败");
+                    console.log(e)
+                })
 
-                if (this.new_article){
+                if (this.new_article) {
                     // 新文章分页
                     // 分页文章
-                    reads_remote("/article/article0.json",(r)=>{
+                    reads_remote("/article/article0.json", (r) => {
                         r.datas[this.newarticle.aid] = tdata
                         let cnt = Object.keys(r.datas).length
-                        if (cnt >= Article_Prepage_Number - 1){
-                            saves_remote("/article/article" + r.pages + ".json",r)
-                            saves_remote("/article/article0.json",{"pages":parseInt(r.pages)+1,"datas":""})
-                            this.site_info.article_now_page = parseInt(r.pages)+1
-                            saves_remote("/siteinfo.json",this.site_info,"application/json",(e)=>{
+                        if (cnt >= Article_Prepage_Number - 1) {
+                            saves_remote("/article/article" + r.pages + ".json", r)
+                            saves_remote("/article/article0.json", {"pages": parseInt(r.pages) + 1, "datas": ""})
+                            this.site_info.article_now_page = parseInt(r.pages) + 1
+                            saves_remote("/siteinfo.json", this.site_info, "application/json", (e) => {
                                 console.error(e);
                                 alert("保存站点信息失败")
                             })
+                        } else {
+                            saves_remote("/article/article0.json", r, "application/json")
                         }
-                        else{
-                            saves_remote("/article/article0.json",r,"application/json")
-                        }
-                    },true,(e)=>{alert("保存文章分页失败");console.log(e)})
+                    }, true, (e) => {
+                        alert("保存文章分页失败");
+                        console.log(e)
+                    })
 
                     // 分类分页
-                    reads_remote("/article/class-" + this.newarticle.aclass + "-0.json",(r)=>{
+                    reads_remote("/article/class-" + this.newarticle.aclass + "-0.json", (r) => {
                         r.datas[this.newarticle.aid] = tdata
                         let cnt = Object.keys(r.datas).length
-                        if (cnt >= Article_Prepage_Number - 1){
-                            saves_remote("/article/class-" + this.newarticle.aclass + "-" + r.pages + ".json",r)
-                            saves_remote("/article/class-" + this.newarticle.aclass + "-0.json",{"pages":parseInt(r.pages)+1,"datas":""})
-                            this.site_info.class_now_page[this.newarticle.aclass] = parseInt(r.pages)+1
-                            saves_remote("/siteinfo.json",this.site_info,"application/json",(e)=>{
+                        if (cnt >= Article_Prepage_Number - 1) {
+                            saves_remote("/article/class-" + this.newarticle.aclass + "-" + r.pages + ".json", r)
+                            saves_remote("/article/class-" + this.newarticle.aclass + "-0.json", {
+                                "pages": parseInt(r.pages) + 1,
+                                "datas": ""
+                            })
+                            this.site_info.class_now_page[this.newarticle.aclass] = parseInt(r.pages) + 1
+                            saves_remote("/siteinfo.json", this.site_info, "application/json", (e) => {
                                 console.error(e);
                                 alert("保存站点信息失败")
                             })
+                        } else {
+                            saves_remote("/article/class-" + this.newarticle.aclass + "-0.json", r, "application/json")
                         }
-                        else{
-                            saves_remote("/article/class-" + this.newarticle.aclass + "-0.json",r,"application/json")
-                        }
-                    },true,(e)=>{alert("保存文章分页失败");console.log(e)})
-                }
-                else{
+                    }, true, (e) => {
+                        alert("保存文章分页失败");
+                        console.log(e)
+                    })
+                } else {
                     // 旧文章修改
                     // 分页文章
-                    reads_remote("/article/article" + this.newarticle.apages + ".json",(r)=>{
+                    reads_remote("/article/article" + this.newarticle.apages + ".json", (r) => {
                         r[this.newarticle.aid] = tdata
-                        saves_remote("/article/article" + this.newarticle.apages + ".json",r)
-                    },true,(e)=>{alert("保存文章分页失败");console.log(e)})
+                        saves_remote("/article/article" + this.newarticle.apages + ".json", r)
+                    }, true, (e) => {
+                        alert("保存文章分页失败");
+                        console.log(e)
+                    })
 
                     // 分类分页
-                    reads_remote("/article/class-" + this.newarticle.aclass + "-" + this.newarticle.classpages + ".json",(r)=>{
+                    reads_remote("/article/class-" + this.newarticle.aclass + "-" + this.newarticle.classpages + ".json", (r) => {
                         r.datas[this.newarticle.aid] = tdata
-                        saves_remote("/article/class-" + this.newarticle.aclass + "-" + this.newarticle.classpages + ".json",r)
-                    },true,(e)=>{alert("保存文章分页失败");console.log(e)})
+                        saves_remote("/article/class-" + this.newarticle.aclass + "-" + this.newarticle.classpages + ".json", r)
+                    }, true, (e) => {
+                        alert("保存文章分页失败");
+                        console.log(e)
+                    })
                 }
 
                 // 更新分类信息
-                this.aclass_list.forEach((e)=>{
-                    e.article_count = (parseInt(e.article_count)+1).toString()
+                this.aclass_list.forEach((e) => {
+                    e.article_count = (parseInt(e.article_count) + 1).toString()
                 })
-                saves_remote("/class/class.json",this.aclass_list)
+                saves_remote("/class/class.json", this.aclass_list)
 
                 delete tdata['keyword']
                 delete tdata['describe']
@@ -307,16 +336,22 @@ upapp = Vue.createApp({
                 delete tdata['cc3']
 
                 // 分类总目录
-                reads_remote("/class/class" + this.newarticle.aclass + ".json",(article_list)=>{
+                reads_remote("/class/class" + this.newarticle.aclass + ".json", (article_list) => {
                     article_list[this.newarticle.aid] = tdata
-                    saves_remote("/class/class" + this.newarticle.aclass + ".json",article_list)
-                },true,(e)=>{console.error(e);alert("分类目录保存失败")})
+                    saves_remote("/class/class" + this.newarticle.aclass + ".json", article_list)
+                }, true, (e) => {
+                    console.error(e);
+                    alert("分类目录保存失败")
+                })
 
                 // 总目录
-                reads_remote("/articles.json",(article_list)=>{
+                reads_remote("/articles.json", (article_list) => {
                     article_list[this.newarticle.aid] = tdata
-                    saves_remote("/articles.json",article_list)
-                },true,(e)=>{console.error(e);alert("总目录保存失败")}) // 保存文章到列表
+                    saves_remote("/articles.json", article_list)
+                }, true, (e) => {
+                    console.error(e);
+                    alert("总目录保存失败")
+                }) // 保存文章到列表
                 alert("保存成功")
             }
             this.loading = false
@@ -382,12 +417,20 @@ upapp = Vue.createApp({
                 this.newarticle.cc3 = tdata.cc3
                 this.newarticle.apages = tdata.apages
                 this.newarticle.classpages = tdata.classpages
+                this.newarticle.password_protected = tdata.password_protected
 
                 this.tips = "正在加载文章，请稍后"
                 // 先加载数据再读取文章
                 reads_remote("/article/" + this.newarticle.aid + ".md",(md)=>{
                     // 写入文章
-                    this.artinfo = md
+                    if (this.newarticle.password_protected){
+                        // 解密
+                        this.artpassword = prompt("文章已加密，请输入密码：")
+                        this.artinfo = AES_decrypt(md,this.artpassword)
+                    }
+                    else{
+                        this.artinfo = md
+                    }
                     MDEdit.clear()
                     MDEdit.appendMarkdown(this.artinfo)
                     this.tips = "加载完成"
@@ -415,12 +458,20 @@ upapp = Vue.createApp({
                 this.newarticle.cc1 = tdata.cc1
                 this.newarticle.cc2 = tdata.cc2
                 this.newarticle.cc3 = tdata.cc3
+                this.newarticle.password_protected = tdata.password_protected
                 if (tdata.pub){
                     this.tips = "正在加载文章，请稍后"
                     // 先加载数据再读取文章
                     reads_remote(lnk + "." + this.saveto,(md)=>{
-                        // 写入文章
-                        this.artinfo = md
+                        // 读取文章
+                        if (this.newarticle.password_protected){
+                            // 解密
+                            this.artpassword = prompt("文章已加密，请输入密码：")
+                            this.artinfo = AES_decrypt(md,this.artpassword)
+                        }
+                        else{
+                            this.artinfo = md
+                        }
                         MDEdit.clear()
                         MDEdit.appendMarkdown(this.artinfo)
                         this.tips = "加载完成"

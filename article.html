@@ -8,9 +8,10 @@
     <title>文章</title>
     <script src="global/settings.js"></script>
 
-    <script type='text/javascript' src='global/js/md5.js'></script>
-    <script type='text/javascript' src='global/js/hmac-sha1.js'></script>
-    <script type='text/javascript' src='js/common.js'></script>
+    <script src="global/js/aes.js"></script>
+    <script src='global/js/md5.js'></script>
+    <script src='global/js/hmac-sha1.js'></script>
+    <script src='js/common.js'></script>
 
     <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="component/editor/css/editormd.css">
@@ -19,12 +20,12 @@
     <link rel="stylesheet" href="css/words.css">
     <link rel="stylesheet" href="css/layouts.css">
 
-    <script type="application/javascript" src="global/js/axios.js"></script>
+    <script src="global/js/axios.js"></script>
 
-    <script type="application/javascript" src="global/js/vue.global.js"></script>
-    <script type="application/javascript" src="global/js/element-plus.full.js"></script>
+    <script src="global/js/vue.global.js"></script>
+    <script src="global/js/element-plus.full.js"></script>
 
-    <script type="application/javascript" src="global/js/jquery.min.js"></script>
+    <script src="global/js/jquery.min.js"></script>
     <script src="component/editor/lib/marked.min.js"></script>
     <script src="component/editor/lib/prettify.min.js"></script>
     <script src="component/editor/lib/raphael.min.js"></script>
@@ -48,7 +49,7 @@
         <site-header :now_page="'2'"></site-header>
         <el-container>
             <el-aside width="250px"  id="article_aside_outer" v-if="hide_menu">
-<!--                TODO:用 Descriptions 描述列表展示基本信息-->
+                <!--                TODO:用 Descriptions 描述列表展示基本信息-->
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
                     <div ref="innerRef">
                         <div id="article_aside" :style="{'font-size': font_size_fix}" class="markdown-body editormd-preview-container"> </div>
@@ -57,6 +58,13 @@
             </el-aside>
             <el-main id="article_center" >
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
+                    <el-form label-width="150px"  v-if="wait_password">
+                        <el-form-item label="文章密码：">
+                            <el-input type="password" placeholder="请输入密码" v-model="artpassword" show-password></el-input>
+                            <span style="color: #409EFF">若错误输入密码导致文章读取异常，请刷新页面并重新输入</span>
+                        </el-form-item>
+                        <el-button @click="load_art_with_password">读取文章</el-button>
+                    </el-form>
                     <div ref="innerRef" >
                         <div id="mdview" :style="{'font-size': font_size_fix}">
                             <textarea style="display: none">页面正在加载中，请稍候...（若长时间未响应请检查网络连接）</textarea>

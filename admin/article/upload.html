@@ -5,9 +5,10 @@
     <title>发布新文章</title>
     <script src="../../global/settings.js"></script>
 
-    <script type='text/javascript' src='/global/js/md5.js'></script>
-    <script type='text/javascript' src='/global/js/hmac-sha1.js'></script>
-    <script type='text/javascript' src='/js/common.js'></script>
+    <script src='/global/js/md5.js'></script>
+    <script src='/global/js/hmac-sha1.js'></script>
+    <script src="/global/js/aes.js"></script>
+    <script src='/js/common.js'></script>
 
     <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="../../component/editor/css/editormd.css">
@@ -16,12 +17,12 @@
     <link rel="stylesheet" href="../../css/words.css">
     <link rel="stylesheet" href="../../css/layouts.css">
 
-    <script type="application/javascript" src="/global/js/axios.js"></script>
-    <script type="application/javascript" src="/global/js/vue.global.js"></script>
-    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+    <script src="/global/js/axios.js"></script>
+    <script src="/global/js/vue.global.js"></script>
+    <script src="/global/js/element-plus.full.js"></script>
 
-    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
-    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+    <script src="/global/js/jquery.min.js"></script>
+    <script src="/component/editor/js/editormd.js"></script>
 
     <script src="../../component/storage/local.js"></script>
     <script src="../../component/storage/COS.js"></script>
@@ -87,6 +88,13 @@
                         <el-radio :label="'md'">MarkDown</el-radio>
                         <el-radio :label="'html'" v-if="staticfile">HTML</el-radio>
                     </el-radio-group>
+                </el-form-item>
+                <el-form-item label="密码保护：">
+                    <el-switch v-model="newarticle.password_protected" />
+                </el-form-item>
+                <el-form-item label="文章密码：" v-if="newarticle.password_protected">
+                    <el-input type="password" placeholder="请输入密码" v-model="artpassword" show-password></el-input>
+                    <span style="color:red">若您忘记了密码，则将无法找回文章内容</span>
                 </el-form-item>
                 <el-form-item label="时间：">
                     <el-date-picker placeholder="发布日期" type="date" v-model="pubtime" clearable></el-date-picker>

@@ -106,5 +106,22 @@ function change_url_without_refresh(s){
     history.pushState({}, '', s)
 }
 
+/**
+ * AES 加密
+ * @param s 带加密内容
+ * @param k 密码
+ * @return {string} 加密结果
+ */
+function AES_encrypt(s,k){
+    return AESJS.AES.encrypt(JSON.stringify(s), k).toString();
+}
 
-
+/**
+ * AES 解密
+ * @param s 带解密内容
+ * @param k 密码
+ * @return {string} 解密结果
+ */
+function AES_decrypt(s,k){
+    return str_to_json(AESJS.AES.decrypt(s.toString(), k).toString(AESJS.enc.Utf8));
+}
