@@ -58,7 +58,7 @@
             </el-aside>
             <el-main id="article_center" >
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
-                    <el-form label-width="150px"  v-if="wait_password">
+                    <el-form label-width="150px"  v-if="wait_password" @submit.native.prevent>
                         <el-form-item label="文章密码：">
                             <el-input type="password" placeholder="请输入密码" v-model="artpassword" show-password></el-input>
                             <span style="color: #409EFF">若错误输入密码导致文章读取异常，请刷新页面并重新输入</span>

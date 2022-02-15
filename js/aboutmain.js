@@ -19,7 +19,6 @@ mainapp = Vue.createApp({
         reads_remote("/about.md",(r)=>{
 
             reads_remote("/README.md",(s)=>{
-                console.log(r + "\n\n" + s)
                 MDView = editormd.markdownToHTML("index-main", {
                         markdown: r + "\n\n" + s,
                         // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
