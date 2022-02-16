@@ -7,7 +7,12 @@ const aapp = Vue.createApp({
         return {
             "article_id":null,
             "article_link":null,
-            "article_info":{},
+            "article_info":{
+                "author":"",
+                "tags":"",
+                "aclass":"",
+                "pubtime":"0",
+            },
             "scrtimer":null,
             "scrollnum":0,
             "loading":true,
@@ -17,9 +22,34 @@ const aapp = Vue.createApp({
                 cid: '0',
                 cname: '默认分类',
             }],
+            "mdlist":[]
         }
     },
     computed:{
+        "pubtime":{
+            get(){
+                const dd = new Date(this.article_info.pubtime)
+                return dd.getFullYear() + "-" + dd.getMonth() + "-" + dd.getDate()
+            }
+        },
+        mdtips:{
+            get(){
+                let l = reads("mdlist","local","string",true)
+                return l[Math.round(Math.random()*(l.length-1))]
+            }
+        },
+        "classnames":{
+            get(){
+                let a
+                this.aclass_list.forEach((r)=>{
+                    if (r.cid === this.article_info.aclass){
+                        a = r.cname
+                    }
+                })
+                return a
+            }
+
+        },
         "aid":{
             get(){
                 return this.article_id
@@ -51,7 +81,7 @@ const aapp = Vue.createApp({
         load_art(aid){
             // 获取文章信息并加载
             reads_remote("/article/" + aid + ".json",(r)=>{
-                this.artinfo = r
+                this.article_info = r
                 if (r.password_protected){
                     // 密码保护
                     this.wait_password = true

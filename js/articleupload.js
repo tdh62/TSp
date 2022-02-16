@@ -93,6 +93,9 @@ upapp = Vue.createApp({
         }
     },
     methods:{
+        leftfix(){
+            document.getElementsByClassName("CodeMirror-gutters")[0].style.left=null;
+        },
         openbed(){
             window.open('/admin/imgbed.html')
         },
@@ -168,17 +171,24 @@ upapp = Vue.createApp({
                 if (this.saveto === "md") {
                     // 保存 MarkDown 和 对应 HTML
                     saves_remote(this.newarticle.staticlink + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
+                    let ch = false
 
-                    // 生成 HTML 内容
-                    axios.get("/article.html").then((r) => {
-                        let r_datas = r.data.replace("v_app.load_aid()", "v_app.load_static('" + this.newarticle.staticlink + ".md')")
-                        saves_remote(this.newarticle.staticlink + ".html", r_datas, "text/html",
-                            (res) => {
-                                console.log(res)
-                            })
-                    }).catch((e) => {
-                        console.error(e)
+                    site_base_files.forEach((s)=>{
+                        if (this.newarticle.staticlink.startsWith(s)) ch = true
                     })
+
+                    if (ch===true){
+                        // 生成 HTML 内容
+                        axios.get("/article.html").then((r) => {
+                            let r_datas = r.data.replace("v_app.load_aid()", "v_app.load_static('" + this.newarticle.staticlink + ".md')")
+                            saves_remote(this.newarticle.staticlink + ".html", r_datas, "text/html",
+                                (res) => {
+                                    console.log(res)
+                                })
+                        }).catch((e) => {
+                            console.error(e)
+                        })
+                    }
                 } else {
                     // 直接保存 HTML
                     saves_remote(this.newarticle.staticlink + ".html", this.artinfo, "text/html",
@@ -440,6 +450,7 @@ upapp = Vue.createApp({
                 this.loading = false
             },true,()=>{alert("文章数据读取失败，请检查网络连接并刷新重试")})
             $("#artinfos")[0].value = this.artinfo
+
         },
         load_static(lnk) {
             // 读静态文章
@@ -477,6 +488,7 @@ upapp = Vue.createApp({
                         MDEdit.clear()
                         MDEdit.appendMarkdown(this.artinfo)
                         this.tips = "加载完成"
+                        document.getElementsByClassName("CodeMirror-gutters")[0].style.left=null;
                     },false,()=>{alert("文章内容读取失败，请刷新重试")})
                 }
                 else{

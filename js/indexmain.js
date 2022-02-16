@@ -40,6 +40,9 @@ mainapp = Vue.createApp({
                 this.banner_list = r
             }
         },true,(e)=>{console.error(e)})
+
+        reads_remote("/settings/mdlist.txt",(r)=>{save_to_local("mdlist",json_to_str(r))})
+
         this.loading = false
     }
 })

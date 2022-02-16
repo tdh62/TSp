@@ -49,8 +49,29 @@
         <site-header :now_page="'2'"></site-header>
         <el-container>
             <el-aside width="250px"  id="article_aside_outer" v-if="hide_menu">
-                <!--                TODO:用 Descriptions 描述列表展示基本信息-->
                 <el-scrollbar ref="scrollbarRef" :height="artheight" always>
+<!--                    <el-descriptions tag="div" class="margin-top" :title="art.atitle" :column="3" size="small" border id="article-site-info">-->
+                    <el-descriptions tag="div" class="margin-top" :column="2" size="small" id="article-site-info"
+                                     direction="vertical">
+                        <el-descriptions-item label="作者">
+                            {{article_info.author}}
+                        </el-descriptions-item>
+                        <el-descriptions-item label="标签">
+                            <el-tag size="small" v-for="tag in article_info.tags.split(',')" class="article_list_tag" v-text="tag"></el-tag>
+                        </el-descriptions-item>
+                        <el-descriptions-item label="分类">
+                            {{classnames}}
+                        </el-descriptions-item>
+                        <el-descriptions-item label="发布时间">
+                            {{pubtime}}
+                        </el-descriptions-item>
+                        <el-descriptions-item label="">
+                            {{mdtips}}
+                        </el-descriptions-item>
+                    </el-descriptions>
+
+
+
                     <div ref="innerRef">
                         <div id="article_aside" :style="{'font-size': font_size_fix}" class="markdown-body editormd-preview-container"> </div>
                     </div>
