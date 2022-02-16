@@ -11,7 +11,6 @@
 function set_login(u,p){
     remoteStorage.set_user_name(u)
     remoteStorage.set_password(p)
-    save_to_session("logined","1")
 }
 
 /**
@@ -20,7 +19,6 @@ function set_login(u,p){
 function clear_login(){
     remoteStorage.clear_user_name()
     remoteStorage.clear_password()
-    delete_from_session("logined")
 }
 
 /**
@@ -28,7 +26,7 @@ function clear_login(){
  * @return {boolean}
  */
 function check_login(){
-    return read_from_session("logined") === "1"
+    return remoteStorage.get_login_status()
 }
 
 /**

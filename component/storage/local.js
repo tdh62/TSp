@@ -172,7 +172,7 @@ function reads(s,target="session",formats = "string",toobj = false){
     }
     if (formats === "base64"){
         // 处理 Base64 编码
-        k = b64dncode(k)
+        k = b64decode(k)
     }
     if (toobj){
         // 转换对象到 JSON 字符串

@@ -17,22 +17,40 @@ class TencentCOS{
         return "腾讯云对象存储(COS)"
     }
 
+    /**
+     * 获取登录状态
+     * @return {boolean} 是否登录
+     */
     get_login_status(){
         return read_from_local("AccessKey") !== "" && read_from_local("AccessKey") != null
     }
 
+    /**
+     * 设置用户名
+     * @param s 用户名
+     */
     set_user_name(s){
         return this.setAccessID(s)
     }
 
+    /**
+     * 设置密码
+     * @param s 密码
+     */
     set_password(s){
         return this.setAccessKey(s)
     }
 
+    /**
+     * 删除用户名
+     */
     clear_user_name(){
         delete_from_local("AccessID")
     }
 
+    /**
+     * 删除密码
+     */
     clear_password(){
         delete_from_local("AccessKey")
     }

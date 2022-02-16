@@ -131,7 +131,7 @@ upapp = Vue.createApp({
             MDEdit.clear()
             MDEdit.appendMarkdown(this.artinfo)
 
-            if (init){
+            if (init === true){
                 this.tips = "发现保存的草稿，已自动读取，点击此处 <a href='' onclick='v_app.delete_cg();MDEdit.clear();" +
                     "v_app.tips=\"删掉了\";return false;'>删除并清空</a>，请勿同时打开多个编辑窗口"
             }
@@ -181,7 +181,7 @@ upapp = Vue.createApp({
                     })
                 } else {
                     // 直接保存 HTML
-                    saves_remote(this.newarticle.staticlink + ".html", MDEdit.getHTML(), "text/html",
+                    saves_remote(this.newarticle.staticlink + ".html", this.artinfo, "text/html",
                         (res) => {
                             console.log(res)
                         })
@@ -326,7 +326,9 @@ upapp = Vue.createApp({
 
                 // 更新分类信息
                 this.aclass_list.forEach((e) => {
-                    e.article_count = (parseInt(e.article_count) + 1).toString()
+                    if (e.aid === this.aclass){
+                        e.article_count = (parseInt(e.article_count) + 1).toString()
+                    }
                 })
                 saves_remote("/class/class.json", this.aclass_list)
 

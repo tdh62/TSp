@@ -78,24 +78,24 @@
                     saves_remote("/articles.json",{},"application/json",()=>{
 // 图床
                         saves_remote("/imgbed/imagebed.json", {"pages":0,"datas":[]},"application/json",()=>{
-                            // 分类列表
+// 分类列表
                             saves_remote("/class/class.json",[{"cid":"0","cname":"默认分类","description":"默认的分类",
                                 "article_count":"4","cc1":"","cc2":""}],"application/json",()=>{
-                                // 默认分类
+// 默认分类
                                 saves_remote("/class/class0.json",{},"application/json",()=>{
-                                    // 默认分类目录
+// 默认分类目录
                                     saves_remote("/static-link.json",{},"application/json",()=>{
-                                        // 站点信息
+// 站点信息
                                         saves_remote("/siteinfo.json",{"site_title":"青橙屋","site_sub_title":"见到你很高兴",},"application/json",()=>{
-                                            // 最近文章
+// 最近文章
                                             saves_remote("/recent-articles.json",[],"application/json",()=>{
-                                                // 文章分页0
+// 文章分页0
                                                 saves_remote("/article/article0.json",{"pages":0,"datas":{}},"application/json",()=>{
-                                                    // 最近默认分类
+// 最近默认分类
                                                     saves_remote("/recent-class-0.json", [],"application/json",()=>{
-                                                        // 默认分类分页
+// 默认分类分页
                                                         saves_remote("/article/class-0-0.json", {"pages":0,"datas":{}},"application/json",()=>{
-                                                            // ...
+// ...
                                                             alert("初始化完成！")
                                                             _this.loading = false
                                                         })
@@ -110,10 +110,8 @@
                         })
                     })
                 })
-            })
-    }
-    }
-    })
+            }
+        }})
     lapp.use(ElementPlus)
     v_app = lapp.mount("#login-main")
 </script>
