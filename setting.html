@@ -32,6 +32,10 @@
                         <el-slider v-model="font_size_fix" :step="0.1" :min="0.5" :max="2" > </el-slider>
                     </el-form-item>
                     <br />
+                    <el-form-item label="滚动更新">
+                        <el-switch v-model="scroll_to_refresh" :step="0.1" :min="0.5" :max="2" > </el-switch>
+                    </el-form-item>
+                    <br />
                     <br />
                     <el-button type="primary" @click="doset">保存并返回</el-button>
                 </el-form>
@@ -43,7 +47,11 @@
 <script type="application/javascript">
     lapp = Vue.createApp({
         data(){
-            return {"loading":false,"font_size_fix":1}
+            return {
+                "loading":false,
+                "font_size_fix":1,
+                "scroll_to_refresh":false,
+            }
         },
         computed:{
             logined(){
@@ -53,6 +61,7 @@
         mounted(){
             const ft = read_from_local("font_size_fix")
             this.font_size_fix = ft?parseFloat(ft.replace("em","")):1
+            this.scroll_to_refresh = read_from_local("scroll_to_refresh") === "true"
         },
         methods:{
             doset(){
@@ -60,6 +69,7 @@
                 // 依次初始化
                 // 下一篇文章 ID
                 save_to_local("font_size_fix",this.font_size_fix + "em")
+                save_to_local("scroll_to_refresh",this.scroll_to_refresh)
                 window.location.href = "/index.html"
             }
         }
