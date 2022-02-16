@@ -189,6 +189,9 @@ upapp = Vue.createApp({
                             console.error(e)
                         })
                     }
+                    else{
+                        alert("为保障站点正常运行，HTML 文件没有进行覆盖")
+                    }
                 } else {
                     // 直接保存 HTML
                     saves_remote(this.newarticle.staticlink + ".html", this.artinfo, "text/html",
@@ -245,32 +248,33 @@ upapp = Vue.createApp({
                 }
                 saves_remote("/article/" + this.newarticle.aid + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
 
-                // 最近发布
-                reads_remote("/recent-articles.json", (r) => {
-                    let cnt = r.push(tdata)
-                    if (cnt > Resent_Article_Number) {
-                        delete r[0]
-                    }
-                    saves_remote("/recent-articles.json", r, "application/json")
-                }, true, (e) => {
-                    alert("保存最新文章失败");
-                    console.log(e)
-                })
+                if (this.newarticle){
+                    // 新文章
 
-                // 分类最近
-                reads_remote("/recent-class-" + this.newarticle.aclass + ".json", (r) => {
-                    let cnt = r.push(tdata)
-                    if (cnt > Resent_Article_Number) {
-                        delete r[0]
-                    }
-                    saves_remote("/recent-class-" + this.newarticle.aclass + ".json", r, "application/json")
-                }, true, (e) => {
-                    alert("保存最新分类文章失败");
-                    console.log(e)
-                })
+                    // 最近发布
+                    reads_remote("/recent-articles.json", (r) => {
+                        let cnt = r.push(tdata)
+                        if (cnt > Resent_Article_Number) {
+                            delete r[0]
+                        }
+                        saves_remote("/recent-articles.json", r, "application/json")
+                    }, true, (e) => {
+                        alert("保存最新文章失败");
+                        console.log(e)
+                    })
 
-                if (this.new_article) {
-                    // 新文章分页
+                    // 分类最近
+                    reads_remote("/recent-class-" + this.newarticle.aclass + ".json", (r) => {
+                        let cnt = r.push(tdata)
+                        if (cnt > Resent_Article_Number) {
+                            delete r[0]
+                        }
+                        saves_remote("/recent-class-" + this.newarticle.aclass + ".json", r, "application/json")
+                    }, true, (e) => {
+                        alert("保存最新分类文章失败");
+                        console.log(e)
+                    })
+
                     // 分页文章
                     reads_remote("/article/article0.json", (r) => {
                         r.datas[this.newarticle.aid] = tdata
