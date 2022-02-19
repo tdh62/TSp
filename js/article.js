@@ -87,7 +87,7 @@ const aapp = Vue.createApp({
     },
     methods:{
         edit_art(aid){
-            window.location.href = "/admin/article/upload.html?aid=" + aid
+            window.location.href = "/admin/article/upload.html?aid=" + this.aid
         },
         load_art(aid){
             // 获取文章信息并加载
