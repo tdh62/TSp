@@ -365,7 +365,7 @@ upapp = Vue.createApp({
                     console.error(e);
                     alert("总目录保存失败")
                 }) // 保存文章到列表
-                alert("保存成功")
+                alert("保存请求已提交")
             }
             this.loading = false
         },

@@ -32,10 +32,18 @@ const aapp = Vue.createApp({
                 return dd.getFullYear() + "-" + dd.getMonth() + "-" + dd.getDate()
             }
         },
+        "admin_login"(){
+            return remoteStorage.get_login_status()
+        },
         mdtips:{
             get(){
                 let l = reads("mdlist","local","string",true)
-                return l[Math.round(Math.random()*(l.length-1))]
+                if (l !== null){
+                    return l[Math.round(Math.random()*(l.length-1))]
+                }
+                else{
+                    return "嘿，很高兴见到你"
+                }
             }
         },
         "classnames":{
@@ -78,6 +86,9 @@ const aapp = Vue.createApp({
 
     },
     methods:{
+        edit_art(aid){
+            window.location.href = "/admin/article/upload.html?aid=" + aid
+        },
         load_art(aid){
             // 获取文章信息并加载
             reads_remote("/article/" + aid + ".json",(r)=>{

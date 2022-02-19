@@ -40,6 +40,9 @@
       <div id="art-index-main" :style="{'font-size': font_size_fix}">
                   <div class="text-left buttom10">
                     <h1>{{article_title}}</h1>
+                    <br />
+                    <el-button type="success" @click.stop="new_art" v-if="admin_login" plain round>发布新文章</el-button>
+                    <br />
                   </div>
             <el-collapse accordion class="buttom10" v-infinite-scroll="load_more">
               <el-collapse-item :name="art.aid" v-for="art in all_article" :infinite-scroll-disabled="has_more_art">
@@ -50,6 +53,7 @@
                 <div>
                   <el-descriptions class="margin-top" :title="art.atitle" :column="3" size="small" border>
                     <template #extra>
+                      <el-button type="info" @click.stop="edit_art(art.aid)" v-if="admin_login" round>编辑文章</el-button>
                       <el-button type="primary" @click.stop="show_art(art.aid)" round>查看文章</el-button>
                     </template>
                     <el-descriptions-item label="作者">
@@ -84,6 +88,9 @@
         </ul>
         -->
     </div>
+    <br />
+    <br />
+    <br />
     <el-footer class="t-footer" height="50px" id="site-footer">
       页脚
     </el-footer>

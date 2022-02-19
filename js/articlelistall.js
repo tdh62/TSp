@@ -25,6 +25,9 @@ mainapp = Vue.createApp({
 
             // 还有更多文章?
             return this.total_page>this.now_page?"":"disabled"
+        },
+        "admin_login"(){
+            return remoteStorage.get_login_status()
         }
     },
     mounted(){
@@ -55,6 +58,12 @@ mainapp = Vue.createApp({
         show_art(aid){
             window.location.href = "/article.html?aid=" + aid
         },
+        edit_art(aid){
+            window.location.href = "/admin/article/upload.html?aid=" + aid
+        },
+        new_art(aid){
+            window.location.href = "/admin/article/upload.html"
+        },
         getd(ts){
             const t = new Date(ts)
             return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDay().toString().padStart(2,'0')
@@ -75,6 +84,7 @@ mainapp = Vue.createApp({
                     }
                 },true,(e)=>{console.error(e)})
                 this.now_page++
+                this.article_title = "所有文章"
             }
         }
 

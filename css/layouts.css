@@ -3,11 +3,12 @@
 CopyRight @tdh
 */
 
-html,body,#main-body,.el-container,.login-window,#article_main,#article_list_main {
+html,body,#main-body,.el-container,.login-window {
     /*页面占满整个布局*/
     padding: 0;
     margin: 0;
     height: 100%;
+    min-height: 100%;
 }
 el-container{
     margin-bottom: 7px;
@@ -21,7 +22,6 @@ el-collapse{
     /*margin: 0 0 30px;*/
     margin: 20px 60px 5px;
 }
-
 /*---------------------------------页眉内容----------------------------------*/
 .header-row{
     width: 100%;

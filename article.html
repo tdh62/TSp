@@ -69,6 +69,7 @@
                             {{mdtips}}
                         </el-descriptions-item>
                     </el-descriptions>
+                    <el-button type="primary" size="small" @click.stop="edit_art(art.aid)" v-if="admin_login" round>编辑文章</el-button>
 
 
 
