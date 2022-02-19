@@ -125,3 +125,19 @@ function AES_encrypt(s,k){
 function AES_decrypt(s,k){
     return str_to_json(AESJS.AES.decrypt(s.toString(), k).toString(AESJS.enc.Utf8));
 }
+
+/**
+ * 设置 Mate 里的描述内容
+ * @param s 描述内容
+ */
+function setDescription(s){
+    document.querySelector('meta[name="description"]').setAttribute("content", s);
+}
+
+/**
+ * 设置 Mate 里的描述内容
+ * @param s 描述内容
+ */
+function setKeyWords(s){
+    document.querySelector('meta[name="keywords"]').setAttribute("content", s);
+}

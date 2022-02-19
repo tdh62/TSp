@@ -116,8 +116,14 @@ el-menu-item{
 .text-left{
     text-align: left;
 }
-.buttom10{
+.bottom10{
     margin-bottom: 10px;
+}
+.bottom50{
+    margin-bottom: 50px;
+}
+.bottom100{
+    margin-bottom: 100px;
 }
 
 /*

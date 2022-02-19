@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>分类管理</title>
+    <script src="/global/settings.js"></script>
+
+    <script type='text/javascript' src='/global/js/md5.js'></script>
+    <script type='text/javascript' src='/global/js/hmac-sha1.js'></script>
+    <script type='text/javascript' src='/js/common.js'></script>
+
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/component/editor/css/editormd.css">
+    <link rel="stylesheet" href="/component/editor/css/style.css">
+    <link rel="stylesheet" href="/global/css/element-plus.css">
+    <link rel="stylesheet" href="/css/words.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+
+    <script type="application/javascript" src="/global/js/axios.js"></script>
+    <script type="application/javascript" src="/global/js/vue.global.js"></script>
+    <script type="application/javascript" src="/global/js/element-plus.full.js"></script>
+
+    <script type="application/javascript" src="/global/js/jquery.min.js"></script>
+    <script type="application/javascript" src="/component/editor/js/editormd.js"></script>
+
+    <script src="/component/storage/local.js"></script>
+    <script src="/component/storage/COS.js"></script>
+
+    <script src="/component/storage/remote.js"></script>
+    <script type="application/javascript" src="/js/articleupload.js"></script>
+
+    <script src="/component/editor/patch.js"></script>
+    <style>
+        div{text-align: center;margin: auto}
+        body{background: #e0e0e0}
+    </style>
+
+</head>
+<body>
+<div id="login-main" class="login-window">
+    <el-container v-loading="loading">
+        <el-row align="middle">
+            <el-card header="分类管理" style="width: 700px">
+                <el-form label-width="150px" class="login-window">
+                    <p v-if="!logined">请登录</p>
+                    <br />
+                    <div>
+                        <div class="bottom50">
+                            <el-table :data="aclass_list" style="width: 100%">
+                                <el-table-column prop="cid" label="ID"></el-table-column>
+                                <el-table-column prop="cname" label="分类名"></el-table-column>
+                                <el-table-column label="修改名称">
+                                    <template #default="scope">
+                                        <el-button size="small" @click="chname(scope.$index)">修改</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <el-card header="新分类">
+                            <el-form @submit.native.prevent>
+                                <el-form-item label="分类名" style="max-width: 500px">
+                                    <el-input v-model="newcname" :disabled="newcnamedisable"></el-input>
+                                </el-form-item>
+                                注：创建新分类将自动保存修改
+                                <br />
+                                <el-button type="primary" @click="confirm_to_save" v-if="!wait_to_confirm" :loading="newcnamedisable" >
+                                    保存并创建新分类
+                                </el-button>
+                                <el-button type="danger" @click="add_class" v-if="wait_to_confirm">
+                                    再次点击以确认创建
+                                </el-button>
+                            </el-form>
+                        </el-card>
+
+                    </div>
+                    <br />
+                    <el-button type="warning" @click="save_classlist" :disabled="!logined">保存分类信息</el-button>
+
+                </el-form>
+            </el-card>
+        </el-row>
+    </el-container>
+</div>
+
+<script type="application/javascript">
+    lapp = Vue.createApp({
+        data(){
+            return {
+                "loading":false,
+                "newcname":"",
+                "newcnamedisable":false,
+                "aclass_list":[{
+                    cid: '0',
+                    cname: '默认分类',
+                }],
+                "wait_to_confirm":false,
+            }
+        },
+        computed:{
+            logined(){
+                return remoteStorage.get_login_status()
+            }
+        },
+        methods:{
+            confirm_to_save(){
+                let _this = this
+                this.newcnamedisable = true
+                setTimeout(()=>{
+                    _this.wait_to_confirm = true
+                    console.log("1")
+                    setTimeout(()=>{
+                        _this.wait_to_confirm = false
+                        _this.newcnamedisable = false
+                    },5000)
+                },2000)
+            },
+            save_classlist() {
+                this.loading = true
+                saves_remote("/class/class.json",this.aclass_list,"application/json",()=>{
+                    this.loading = false
+                    alert("保存成功")
+                })
+            },
+            chname(i){
+                if (i === "" || i == null){
+                    return
+                }
+                const tgc = this.aclass_list[i]
+                this.aclass_list[i] = {"cid":tgc.cid,"cname":prompt("新分类名：")}
+            },
+            add_class(){
+                const ncid = (this.aclass_list.length)
+                this.aclass_list.push(
+                    {
+                        "cid": ncid,
+                        "cname":this.newcname
+                    }
+                )
+                saves_remote("/class/class" + ncid + ".json",{},"application/json",()=>{
+                    saves_remote("/recent-class-" + ncid + ".json", [],"application/json",()=>{
+                        saves_remote("/article/class-" + ncid + "-0.json", {"pages":0,"datas":{}},"application/json",()=> {
+                            this.save_classlist()  // 保存
+                            this.wait_to_confirm = false
+                            this.newcname = ""
+                            this.newcnamedisable = false
+                        })
+                    })
+                })
+
+            }
+        },
+        mounted(){
+            let _this = this
+            reads_remote("/class/class.json",(r)=>{
+                _this.aclass_list = r
+            },true,(e)=>{console.error(e);alert("分类加载失败")})
+        }
+    })
+
+
+    lapp.use(ElementPlus)
+    v_app = lapp.mount("#login-main")
+</script>
+</body>
+</html>

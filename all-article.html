@@ -38,15 +38,14 @@
 
     <div ref="innerRef" id="article_list_main" >
       <div id="art-index-main" :style="{'font-size': font_size_fix}">
-                  <div class="text-left buttom10">
+                  <div class="text-left bottom10">
                     <h1>{{article_title}}</h1>
                     <br />
                     <el-button type="success" @click.stop="new_art" v-if="admin_login" plain round>发布新文章</el-button>
                     <br />
                   </div>
             <el-collapse accordion v-infinite-scroll="load_more">
-              <el-collapse-item :name="art.aid" v-for="art in all_article" :infinite-scroll-disabled="has_more_art"
-                                infinite-scroll-immediate="false">
+              <el-collapse-item :name="art.aid" v-for="art in all_article" :infinite-scroll-disabled="has_more_art">
                 <template #title>
                   {{art.atitle}}
                   <div class="article_list_date">{{getd(art.pubtime)}}</div>

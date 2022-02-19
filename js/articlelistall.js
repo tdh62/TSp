@@ -36,13 +36,25 @@ mainapp = Vue.createApp({
         }
     },
     mounted(){
+        // 加载分类
+        reads_remote("/class/class.json",(r)=>{
+            this.aclass_list = r
+            r.forEach((d)=>{this.aclass_dict[d.cid] = d.cname})
+        },true,(e)=>{console.error(e);alert("分类加载失败")})
+
         // 加载全部文章
         reads_remote("/article/article0.json",(r)=>{
+            this.all_article = []
             this.total_page = r.pages
-            if (r.datas.length > 0) {
-                r.datas.forEach((t) => {
-                    this.all_article.push(t)
-                })
+
+            const idd = Object.keys(r.datas);
+            if (idd.length > 0) {
+                // for i in
+                idd.reverse()
+                for (let i = 0; i < idd.length; i++) {
+                    this.all_article.push(r.datas[idd[i]])
+                }
+                this.loading = false
             }
             else{
                 this.loading = false
@@ -101,6 +113,9 @@ mainapp = Vue.createApp({
             return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDay().toString().padStart(2,'0')
         },
         load_more(){
+            if (this.total_page<=1){
+                return
+            }
             if (this.now_page >= this.total_page || this.scroll_to_refresh === false){
                 console.log("没有更多了")
             }

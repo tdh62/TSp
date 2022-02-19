@@ -12,6 +12,8 @@ const aapp = Vue.createApp({
                 "tags":"",
                 "aclass":"",
                 "pubtime":"0",
+                "description":"",
+                "keywords":"",
             },
             "scrtimer":null,
             "scrollnum":0,
@@ -147,6 +149,8 @@ const aapp = Vue.createApp({
                     flowChart: true,  // 默认不解析
                     sequenceDiagram: true,  // 默认不解析
                 })
+                setDescription(this.article_info.description)
+                setKeyWords(this.article_info.keywords)
                 _this.loading = false
             }).catch((e)=>{alert("加载失败，请重试");console.log(e)})
         },
@@ -195,6 +199,12 @@ const aapp = Vue.createApp({
                 }
             });
         }
+    },
+    mounted(){
+        let _this = this
+        reads_remote("/class/class.json",(r)=>{
+            _this.aclass_list = r
+        },true,(e)=>{console.error(e);alert("分类加载失败")})
     }
 
 })
