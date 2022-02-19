@@ -58,10 +58,36 @@ const hds = {
     }
 
 }
+
+
+const fts = {
+    props:{now_page:String},
+    data(){
+        return {
+            "ftd":''
+        }
+    },
+    template:"    <div v-html='ftd'>\n" +
+            "    </div>",
+    mounted(){
+        reads_remote("/footer.html",(r)=>{
+            this.ftd = r
+        },false)
+    },
+    methods:{
+
+    }
+
+}
 let shd = null
+let sft = null
 if (typeof aapp != "undefined"){
     shd = aapp.component("site-header",hds)
     shd.now_page = "1"
+    sft = aapp.component("site-footer",fts)
+
 }else{
     shd = mainapp.component("site-header",hds)
+    sft = mainapp.component("site-footer",fts)
+
 }
