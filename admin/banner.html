@@ -37,36 +37,39 @@
     <style>
         div{text-align: center;margin: auto}
         body{background: #e0e0e0}
-    </style>
-    <script src="../js/headerAndFooter.js"></script>
+        </style>
 </head>
 <body>
 <div id="login-main" class="login-window">
     <el-container v-loading="loading">
         <el-row align="middle">
-            <el-card header="图床数据记录" style="width: 700px">
+            <el-card header="首页图设置" style="width: 700px">
                 <el-form label-width="50px" class="login-window">
-                    TODO: 动态加载
-                    <el-form-item label="1">
-                        <el-input v-model="banner1"></el-input>
-                    </el-form-item>
-                    <el-form-item label="2">
-                        <el-input v-model="banner2"></el-input>
-                    </el-form-item>
-                    <el-form-item label="3">
-                        <el-input v-model="banner3"></el-input>
-                    </el-form-item>
-                    <el-form-item label="4">
-                        <el-input v-model="banner4"></el-input>
-                    </el-form-item>
-                    <el-form-item label="5">
-                        <el-input v-model="banner5"></el-input>
-                    </el-form-item>
-                    <el-form-item label="6">
-                        <el-input v-model="banner6"></el-input>
-                    </el-form-item>
+                    <el-table :data="banner_list" >
+                        <el-table-column label="预览" width="500">
+                            <template #default="scope">
+                                <el-image :src="getsrc(scope.$index)"></el-image>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template #default="scope">
+                                <el-button size="small" @click="change_item(scope.$index)">修改</el-button>
+                                <el-button type="warning" size="small" @click="del_item(scope.$index)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-card header="新图片">
+                        <el-form @submit.native.prevent>
+                            <el-form-item label="URL" style="max-width: 500px">
+                                <el-input v-model="newitemurl"></el-input>
+                            </el-form-item>
+                            <el-button type="primary" @click="add_item">
+                                添加
+                            </el-button>
+                        </el-form>
+                    </el-card>
                     <p v-if="!logined">请登录</p>
-                    <el-button type="primary" @click="doadd" :disabled="!logined">保存</el-button>
+                    <el-button type="primary" @click="do_save" :disabled="!logined">保存</el-button>
                 </el-form>
             </el-card>
         </el-row>
@@ -76,7 +79,11 @@
 <script type="application/javascript">
     lapp = Vue.createApp({
         data(){
-            return {"banner1":"","banner2":"","banner3":"","banner4":"","banner5":"","banner6":"","loading":false}
+            return {
+                "banner_list":[],
+                "loading":false,
+                "newitemurl":"",
+            }
         },
         computed:{
             logined(){
@@ -84,25 +91,25 @@
             }
         },
         mounted(){
-
+            reads_remote("/settings/banner.txt",(r)=>{
+                this.banner_list = r
+            },true)
         },
         methods:{
-            doadd(){
-                let _this = this
-                this.loading = true
-                // 添加记录
-                let r = []
-                if (this.banner1 !== "")r.push(this.banner1)
-                if (this.banner2 !== "")r.push(this.banner2)
-                if (this.banner3 !== "")r.push(this.banner3)
-                if (this.banner4 !== "")r.push(this.banner4)
-                if (this.banner5 !== "")r.push(this.banner5)
-                if (this.banner6 !== "")r.push(this.banner6)
-                saves_remote("/settings/banner.txt",r,"application/json",()=>{
-                    _this.loading = false
-                    alert("成功")
-                })
-
+            getsrc(idx){
+                return this.banner_list[idx]
+            },
+            add_item(){
+                this.banner_list.push(this.newitemurl)
+            },
+            del_item(idx){
+                this.banner_list.splice(idx,1)
+            },
+            change_item(idx){
+                this.banner_list[idx] = prompt("新 Banner 图 URL：")
+            },
+            do_save(){
+                saves_remote("/settings/banner.txt",this.banner_list,"application/json",()=>{alert("保存成功")})
             }
 
         }
