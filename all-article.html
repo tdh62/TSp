@@ -2,7 +2,7 @@
 <html lang="zh-hans">
 <head>
   <meta charset="UTF-8">
-  <title>文章列表</title>
+  <title>全部文章</title>
   <script src="global/settings.js"></script>
 
   <script type='text/javascript' src='global/js/md5.js'></script>
@@ -25,7 +25,7 @@
   <script src="component/storage/COS.js"></script>
   <script src="component/storage/remote.js"></script>
   <script src="js/headerAndFooter.js"></script>
-  <script src="js/articlelistmain.js"></script>
+  <script src="js/articlelistall.js"></script>
   <script src="js/site-header.js"></script>
 
 </head>
@@ -39,10 +39,10 @@
     <div ref="innerRef" id="article_list_main" >
       <div id="art-index-main" :style="{'font-size': font_size_fix}">
                   <div class="text-left buttom10">
-                    <h1>最近发布</h1>
+                    <h1>{{article_title}}</h1>
                   </div>
-            <el-collapse accordion class="buttom10">
-              <el-collapse-item :name="art.aid" v-for="art in recent_article">
+            <el-collapse accordion class="buttom10" v-infinite-scroll="load_more">
+              <el-collapse-item :name="art.aid" v-for="art in all_article" :infinite-scroll-disabled="has_more_art">
                 <template #title>
                   {{art.atitle}}
                   <div class="article_list_date">{{getd(art.pubtime)}}</div>
@@ -72,11 +72,8 @@
                 </div>
               </el-collapse-item>
             </el-collapse>
-        <div class="buttom10 text-left">
-          <el-button @click="all_articles">
-            查看所有文章
-          </el-button>
-        </div>
+
+
 
 
 

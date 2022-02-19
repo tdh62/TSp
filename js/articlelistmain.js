@@ -12,9 +12,6 @@ mainapp = Vue.createApp({
         }
     },
     computed:{
-        "index_image"(){
-            return this.banner_list[Math.round(Math.random()*(this.banner_list.length-1))]
-        },
         "font_size_fix"(){
             const ft = read_from_local("font_size_fix")
             return ft?ft:"1em"
@@ -38,6 +35,9 @@ mainapp = Vue.createApp({
             const t = new Date(ts)
             return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDay().toString().padStart(2,'0')
         },
+        all_articles(){
+            document.location = "/all-article.html"
+        }
     }
 })
 mainapp.use(ElementPlus)

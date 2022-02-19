@@ -279,14 +279,11 @@ upapp = Vue.createApp({
                     reads_remote("/article/article0.json", (r) => {
                         r.datas[this.newarticle.aid] = tdata
                         let cnt = Object.keys(r.datas).length
-                        if (cnt >= Article_Prepage_Number - 1) {
+                        if (cnt >= Article_Prepage_Number) {
                             saves_remote("/article/article" + r.pages + ".json", r)
-                            saves_remote("/article/article0.json", {"pages": parseInt(r.pages) + 1, "datas": ""})
+                            saves_remote("/article/article0.json", {"pages": parseInt(r.pages) + 1, "datas": {}})
                             this.site_info.article_now_page = parseInt(r.pages) + 1
-                            saves_remote("/siteinfo.json", this.site_info, "application/json", (e) => {
-                                console.error(e);
-                                alert("保存站点信息失败")
-                            })
+                            saves_remote("/siteinfo.json", this.site_info, "application/json")
                         } else {
                             saves_remote("/article/article0.json", r, "application/json")
                         }
@@ -299,11 +296,11 @@ upapp = Vue.createApp({
                     reads_remote("/article/class-" + this.newarticle.aclass + "-0.json", (r) => {
                         r.datas[this.newarticle.aid] = tdata
                         let cnt = Object.keys(r.datas).length
-                        if (cnt >= Article_Prepage_Number - 1) {
+                        if (cnt >= Article_Prepage_Number) {
                             saves_remote("/article/class-" + this.newarticle.aclass + "-" + r.pages + ".json", r)
                             saves_remote("/article/class-" + this.newarticle.aclass + "-0.json", {
                                 "pages": parseInt(r.pages) + 1,
-                                "datas": ""
+                                "datas": {}
                             })
                             this.site_info.class_now_page[this.newarticle.aclass] = parseInt(r.pages) + 1
                             saves_remote("/siteinfo.json", this.site_info, "application/json", (e) => {

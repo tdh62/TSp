@@ -3,7 +3,7 @@
 CopyRight @tdh
 */
 
-html,body,#main-body,.el-container,.login-window,#article_main {
+html,body,#main-body,.el-container,.login-window,#article_main,#article_list_main {
     /*页面占满整个布局*/
     padding: 0;
     margin: 0;
@@ -11,6 +11,9 @@ html,body,#main-body,.el-container,.login-window,#article_main {
 }
 el-container{
     margin-bottom: 7px;
+}
+el-collapse{
+    overflow: auto;
 }
 #index-main{
     padding: 0;
@@ -110,6 +113,13 @@ el-menu-item{
 .article_list_tag{
     margin-right: 5px;
 }
+.text-left{
+    text-align: left;
+}
+.buttom10{
+    margin-bottom: 10px;
+}
+
 /*
 档窗口宽度小于 992 px 时隐藏左侧栏
  */
