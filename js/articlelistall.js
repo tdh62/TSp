@@ -65,9 +65,12 @@ mainapp = Vue.createApp({
             }
             else{
                 reads_remote("/article/article" + (this.total_page - this.now_page) + ".json",(r)=>{
-                    if (Object.keys(r.datas).length > 0) {
-                        for (const key in r.datas) {
-                            this.all_article.push(r.datas[key])
+                    const idd = Object.keys(r.datas);
+                    if (idd.length > 0) {
+                        // for i in
+                        idd.reverse()
+                        for (let i = 0; i<idd.length; i++){
+                            this.all_article.push(r.datas[idd[i]])
                         }
                     }
                 },true,(e)=>{console.error(e)})
