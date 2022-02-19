@@ -22,39 +22,71 @@ mainapp = Vue.createApp({
         },
         "has_more_art"(){
             // TODO:控制自动加载
-
+            if (!this.scroll_to_refresh){
+                return false
+            }
             // 还有更多文章?
             return this.total_page>this.now_page?"":"disabled"
         },
         "admin_login"(){
             return remoteStorage.get_login_status()
+        },
+        "scroll_to_refresh"(){
+            return read_from_local("scroll_to_refresh") === "true"
         }
     },
     mounted(){
-
-        if (this.load_from_class === ""){
-            // 加载全部文章
-            reads_remote("/article/article0.json",(r)=>{
-                this.total_page = r.pages
-                if (r.datas.length > 0) {
-                    r.datas.forEach((t) => {
-                        this.all_article.push(t)
-                    })
-                }
-                else{
-                    this.loading = false
-                    this.article_title = "没有找到文章哎"
-                }
-            },true,(e)=>{alert("加载失败，请刷新重试");console.error(e)})
-
-        }
-        else{
-            // 加载分类文章
-
-
+        // 加载全部文章
+        reads_remote("/article/article0.json",(r)=>{
+            this.total_page = r.pages
+            if (r.datas.length > 0) {
+                r.datas.forEach((t) => {
+                    this.all_article.push(t)
+                })
             }
+            else{
+                this.loading = false
+                this.article_title = "没有找到文章哎"
+            }
+        },true,(e)=>{alert("加载失败，请刷新重试");console.error(e)})
     },
     methods:{
+        page_change(p){
+            if (this.scroll_to_refresh){
+                return
+            }
+            this.now_page = p
+            this.loading = true
+            this.all_article = []
+            if (p === this.total_page){
+                // 第一页额外加载一页的内容
+                reads_remote("/article/article0.json",(r)=>{
+                    const idd = Object.keys(r.datas);
+                    if (idd.length > 0) {
+                        // for i in
+                        idd.reverse()
+                        for (let i = 0; i<idd.length; i++){
+                            this.all_article.push(r.datas[idd[i]])
+                        }
+                    }
+                },true,(e)=>{console.error(e)})
+            }
+
+            reads_remote("/article/article" + (this.total_page - p) + ".json",(r)=>{
+                const idd = Object.keys(r.datas);
+                if (idd.length > 0) {
+                    // for i in
+                    idd.reverse()
+                    for (let i = 0; i<idd.length; i++){
+                        this.all_article.push(r.datas[idd[i]])
+                    }
+                }
+                this.loading = false
+            },true,(e)=>{console.error(e)})
+
+            this.now_page++
+            this.article_title = "第" + p + "页"
+        },
         show_art(aid){
             window.location.href = "/article.html?aid=" + aid
         },
@@ -69,7 +101,7 @@ mainapp = Vue.createApp({
             return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDay().toString().padStart(2,'0')
         },
         load_more(){
-            if (this.now_page >= this.total_page){
+            if (this.now_page >= this.total_page || this.scroll_to_refresh === false){
                 console.log("没有更多了")
             }
             else{

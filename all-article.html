@@ -44,8 +44,9 @@
                     <el-button type="success" @click.stop="new_art" v-if="admin_login" plain round>发布新文章</el-button>
                     <br />
                   </div>
-            <el-collapse accordion class="buttom10" v-infinite-scroll="load_more">
-              <el-collapse-item :name="art.aid" v-for="art in all_article" :infinite-scroll-disabled="has_more_art">
+            <el-collapse accordion v-infinite-scroll="load_more">
+              <el-collapse-item :name="art.aid" v-for="art in all_article" :infinite-scroll-disabled="has_more_art"
+                                infinite-scroll-immediate="false">
                 <template #title>
                   {{art.atitle}}
                   <div class="article_list_date">{{getd(art.pubtime)}}</div>
@@ -77,7 +78,9 @@
               </el-collapse-item>
             </el-collapse>
 
-
+        <el-pagination :pager-count="8" layout="prev, pager, next, jumper"
+                       :total="total_page*10" @current-change="page_change" v-if="!scroll_to_refresh">
+        </el-pagination>
 
 
 
