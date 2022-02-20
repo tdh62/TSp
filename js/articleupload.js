@@ -367,6 +367,7 @@ upapp = Vue.createApp({
                 }) // 保存文章到列表
                 alert("保存请求已提交")
             }
+            this.new_article = false
             this.loading = false
         },
         set_static_link($event,pub = false){
