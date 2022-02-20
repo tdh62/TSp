@@ -53,7 +53,7 @@
             return {
                 "loading":false,
                 "font_size_fix":1,
-                "scroll_to_refresh":false,
+                "scroll_to_refresh":true,
             }
         },
         computed:{
@@ -63,8 +63,9 @@
         },
         mounted(){
             const ft = read_from_local("font_size_fix")
+            const sr = read_from_local("scroll_to_refresh")
             this.font_size_fix = ft?parseFloat(ft.replace("em","")):1
-            this.scroll_to_refresh = read_from_local("scroll_to_refresh") === "true"
+            this.scroll_to_refresh = sr?sr:true
         },
         methods:{
             doset(){

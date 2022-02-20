@@ -36,6 +36,8 @@ mainapp = Vue.createApp({
         }
     },
     mounted(){
+        const sr = read_from_local("scroll_to_refresh")
+        this.scroll_to_refresh = sr?sr:true
         // 加载分类
         reads_remote("/class/class.json",(r)=>{
             this.aclass_list = r
@@ -110,7 +112,7 @@ mainapp = Vue.createApp({
         },
         getd(ts){
             const t = new Date(ts)
-            return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDay().toString().padStart(2,'0')
+            return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDate().toString().padStart(2,'0')
         },
         load_more(){
             if (this.total_page<=1){

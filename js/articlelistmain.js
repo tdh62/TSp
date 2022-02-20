@@ -33,7 +33,6 @@ mainapp = Vue.createApp({
         },
         getd(ts){
             const t = new Date(ts)
-            console.log(t)
             return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDate().toString().padStart(2,'0')
         },
         all_articles(){
