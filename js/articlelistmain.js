@@ -33,7 +33,8 @@ mainapp = Vue.createApp({
         },
         getd(ts){
             const t = new Date(ts)
-            return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDay().toString().padStart(2,'0')
+            console.log(t)
+            return t.getFullYear() + "-" + t.getMonth().toString().padStart(2,'0') + "-" + t.getDate().toString().padStart(2,'0')
         },
         all_articles(){
             document.location = "/all-article.html"

@@ -119,6 +119,8 @@
                         <el-button type="warning" @click="load_cg" plain>读取草稿</el-button>
                         <el-button type="success" @click="openbed" plain>打开图床</el-button>
                         <el-button type="info" @click="leftfix" plain>格式修正</el-button>
+                        <a href='' onclick='v_app.delete_cg();MDEdit.clear();v_app.tips="删掉了";return false;'>删除草稿</a>
+
                     </el-row>
                     <div class="upload-save-tips-div">
                         <p class="upload-save-tips" :style="{color:tipscolor}" v-html="tips"></p>

@@ -248,7 +248,7 @@ upapp = Vue.createApp({
                 }
                 saves_remote("/article/" + this.newarticle.aid + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
 
-                if (this.newarticle){
+                if (this.new_article){
                     // 新文章
 
                     // 最近发布
