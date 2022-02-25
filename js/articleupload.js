@@ -177,7 +177,7 @@ upapp = Vue.createApp({
                         if (this.newarticle.staticlink.startsWith(s)) ch = true
                     })
 
-                    if (ch===true){
+                    if (ch===false){
                         // 生成 HTML 内容
                         axios.get("/article.html").then((r) => {
                             let r_datas = r.data.replace("v_app.load_aid()", "v_app.load_static('" + this.newarticle.staticlink + ".md')")
