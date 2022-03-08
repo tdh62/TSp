@@ -249,6 +249,7 @@ upapp = Vue.createApp({
                 saves_remote("/article/" + this.newarticle.aid + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
 
                 if (this.new_article === true){
+
                     // 新文章
 
                     // 最近发布
@@ -440,7 +441,7 @@ upapp = Vue.createApp({
                     if (this.newarticle.password_protected){
                         // 解密
                         this.artpassword = prompt("文章已加密，请输入密码：")
-                        this.artinfo = AES_decrypt(md,AES_decrypt(this.artpassword,this.artpassword))
+                        this.artinfo = AES_decrypt(md,this.artpassword)
                     }
                     else{
                         this.artinfo = md
@@ -482,7 +483,7 @@ upapp = Vue.createApp({
                         if (this.newarticle.password_protected){
                             // 解密
                             this.artpassword = prompt("文章已加密，请输入密码：")
-                            AES_decrypt(md,AES_decrypt(this.artpassword,this.artpassword))
+                            AES_decrypt(md,this.artpassword)
                         }
                         else{
                             this.artinfo = md

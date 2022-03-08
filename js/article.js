@@ -117,7 +117,7 @@ const aapp = Vue.createApp({
             let _this = this
             reads_remote("/article/" + this.aid + ".md",(r)=>{
                 MDView = editormd.markdownToHTML("mdview", {
-                    markdown: AES_decrypt(r,AES_encrypt(_this.artpassword,_this.artpassword)),
+                    markdown: AES_decrypt(r,_this.artpassword),
                     // htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
                     htmlDecode: "style,script,iframe",  // you can filter tags decode
                     // toc             : true,
