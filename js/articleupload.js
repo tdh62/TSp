@@ -177,7 +177,7 @@ upapp = Vue.createApp({
                         if (this.newarticle.staticlink.startsWith(s)) ch = true
                     })
 
-                    if (ch===true){
+                    if (ch===false){
                         // 生成 HTML 内容
                         axios.get("/article.html").then((r) => {
                             let r_datas = r.data.replace("v_app.load_aid()", "v_app.load_static('" + this.newarticle.staticlink + ".md')")
@@ -244,11 +244,12 @@ upapp = Vue.createApp({
 
                 if (this.newarticle.password_protected){
                     // 加密
-                    this.artinfo = AES_encrypt(this.artinfo,this.artpassword)
+                    this.artinfo = AES_encrypt(this.artinfo,AES_encrypt(this.artpassword,this.artpassword))
                 }
                 saves_remote("/article/" + this.newarticle.aid + ".md", this.artinfo, "text/x-markdown")  // 保存文章内容
 
-                if (this.new_article){
+                if (this.new_article === true){
+
                     // 新文章
 
                     // 最近发布
@@ -482,7 +483,7 @@ upapp = Vue.createApp({
                         if (this.newarticle.password_protected){
                             // 解密
                             this.artpassword = prompt("文章已加密，请输入密码：")
-                            this.artinfo = AES_decrypt(md,this.artpassword)
+                            AES_decrypt(md,this.artpassword)
                         }
                         else{
                             this.artinfo = md
