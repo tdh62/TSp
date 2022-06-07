@@ -220,7 +220,7 @@ upapp = Vue.createApp({
                     "aid": this.newarticle.aid,  // 文章 ID
                     "atitle": this.newarticle.atitle,  // 文章标题
                     "author": this.newarticle.author,  // 作者
-                    "pubtime": this.newarticle.pubtimer.getTime(),  // 发布时间
+                    "pubtime": (new Date(this.newarticle.pubtimer)).getTime(),  // 发布时间
                     "aclass": this.newarticle.aclass,  // 文章分类
                     "tags": this.newarticle.tags,  // 标签
                     "spimg": this.newarticle.spimg,  // 特色图像
